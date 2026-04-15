@@ -1,0 +1,11 @@
+# Sistema
+.DS_Store
+Thumbs.db
+
+# Dependencias comuns
+node_modules/
+.venv/
+venv/
+
+# Logs
+*.log
