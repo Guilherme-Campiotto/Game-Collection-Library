@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Game Collection Library</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="page-shell">
+    <header class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">Colecao Pessoal</p>
+        <h1>Game Collection Library</h1>
+        <p class="hero-text">
+          Um catalogo visual da sua biblioteca de jogos com cadastro rapido, filtros por plataforma
+          e um painel para acompanhar preco medio de mercado, genero, ano e status da colecao.
+        </p>
+        <div class="hero-actions">
+          <button class="primary" id="scroll-to-form" type="button">Cadastrar novo jogo</button>
+          <button class="secondary" id="export-json" type="button">Exportar JSON</button>
+        </div>
+      </div>
+
+      <section class="hero-gallery" aria-label="Fotos da colecao">
+        <img src="photo-1.jpeg" alt="Estante com jogos de PS4" class="hero-photo tall">
+        <img src="photo-2.jpeg" alt="Estante com jogos de PS3" class="hero-photo">
+        <img src="photo-4.jpeg" alt="Outra estante com jogos de PS4" class="hero-photo">
+      </section>
+    </header>
+
+    <main>
+      <section class="stats-grid" id="stats-grid" aria-label="Resumo da colecao"></section>
+
+      <section class="panel controls-panel">
+        <div class="section-heading">
+          <p class="eyebrow">Explorar</p>
+          <h2>Buscar, filtrar e ordenar</h2>
+        </div>
+
+        <div class="controls-grid">
+          <label>
+            <span>Busca</span>
+            <input id="search-input" type="search" placeholder="Nome, genero, observacoes...">
+          </label>
+
+          <label>
+            <span>Plataforma</span>
+            <select id="platform-filter"></select>
+          </label>
+
+          <label>
+            <span>Genero</span>
+            <select id="genre-filter"></select>
+          </label>
+
+          <label>
+            <span>Status</span>
+            <select id="status-filter"></select>
+          </label>
+
+          <label>
+            <span>Ano minimo</span>
+            <input id="year-min-filter" type="number" min="1980" max="2035" placeholder="Ex: 2010">
+          </label>
+
+          <label>
+            <span>Preco maximo (R$)</span>
+            <input id="price-max-filter" type="number" min="0" step="1" placeholder="Ex: 120">
+          </label>
+
+          <label>
+            <span>Ordenar por</span>
+            <select id="sort-select">
+              <option value="title-asc">Titulo (A-Z)</option>
+              <option value="price-desc">Preco (maior)</option>
+              <option value="price-asc">Preco (menor)</option>
+              <option value="year-desc">Lancamento (mais novo)</option>
+              <option value="year-asc">Lancamento (mais antigo)</option>
+              <option value="platform-asc">Plataforma</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="controls-actions">
+          <button class="secondary" id="clear-filters" type="button">Limpar filtros</button>
+          <label class="import-label" for="import-json">
+            Importar JSON
+            <input id="import-json" type="file" accept="application/json">
+          </label>
+        </div>
+      </section>
+
+      <section class="panel collection-panel">
+        <div class="section-heading">
+          <p class="eyebrow">Biblioteca</p>
+          <h2>Jogos cadastrados</h2>
+        </div>
+
+        <div class="results-meta">
+          <p id="results-count"></p>
+          <button class="secondary" id="toggle-view" type="button">Trocar para tabela</button>
+        </div>
+
+        <div id="games-grid" class="games-grid" aria-live="polite"></div>
+
+        <div class="table-wrap hidden" id="games-table-wrap">
+          <table class="games-table">
+            <thead>
+              <tr>
+                <th>Jogo</th>
+                <th>Plataforma</th>
+                <th>Genero</th>
+                <th>Ano</th>
+                <th>Preco medio</th>
+                <th>Status</th>
+                <th>Foto</th>
+              </tr>
+            </thead>
+            <tbody id="games-table-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel form-panel" id="form-panel">
+        <div class="section-heading">
+          <p class="eyebrow">Cadastro</p>
+          <h2>Adicionar novo item</h2>
+        </div>
+
+        <form id="game-form" class="game-form">
+          <label>
+            <span>Nome</span>
+            <input name="title" type="text" required>
+          </label>
+
+          <label>
+            <span>Plataforma</span>
+            <input name="platform" type="text" placeholder="PS4, PS3, Switch..." required>
+          </label>
+
+          <label>
+            <span>Genero</span>
+            <input name="genre" type="text" placeholder="Acao, RPG, Corrida..." required>
+          </label>
+
+          <label>
+            <span>Ano de lancamento</span>
+            <input name="releaseYear" type="number" min="1980" max="2035" required>
+          </label>
+
+          <label>
+            <span>Preco medio (R$)</span>
+            <input name="averagePriceBrl" type="number" min="0" step="0.01" required>
+          </label>
+
+          <label>
+            <span>Status</span>
+            <select name="status" required>
+              <option value="Na fila">Na fila</option>
+              <option value="Jogando">Jogando</option>
+              <option value="Finalizado">Finalizado</option>
+              <option value="Platinado">Platinado</option>
+              <option value="Colecao">Colecao</option>
+            </select>
+          </label>
+
+          <label>
+            <span>Midia</span>
+            <select name="format" required>
+              <option value="Fisica">Fisica</option>
+              <option value="Digital">Digital</option>
+              <option value="Colecionador">Colecionador</option>
+            </select>
+          </label>
+
+          <label>
+            <span>Condicao</span>
+            <input name="condition" type="text" placeholder="Completo, lacrado, usado...">
+          </label>
+
+          <label class="wide">
+            <span>Observacoes</span>
+            <textarea name="notes" rows="3" placeholder="Edicao, steelbook, idioma, observacoes de compra..."></textarea>
+          </label>
+
+          <label class="wide">
+            <span>Foto da capa ou da midia</span>
+            <input name="photo" type="file" accept="image/*">
+          </label>
+
+          <div class="form-actions wide">
+            <button class="primary" type="submit">Salvar jogo</button>
+            <button class="secondary" id="reset-storage" type="button">Remover jogos adicionados no navegador</button>
+          </div>
+        </form>
+      </section>
+    </main>
+  </div>
+
+  <template id="game-card-template">
+    <article class="game-card">
+      <img class="game-image" alt="">
+      <div class="game-card-body">
+        <div class="game-card-top">
+          <div>
+            <p class="game-platform"></p>
+            <h3 class="game-title"></h3>
+          </div>
+          <p class="game-price"></p>
+        </div>
+        <div class="tag-row"></div>
+        <dl class="game-meta"></dl>
+        <p class="game-notes"></p>
+        <a class="game-source" href="" target="_blank" rel="noreferrer noopener"></a>
+      </div>
+    </article>
+  </template>
+
+  <script src="data/seed-games.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
