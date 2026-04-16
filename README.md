@@ -2,6 +2,16 @@
 
 Catalogo pessoal para organizar a colecao de jogos em uma interface simples, bonita e sem banco de dados.
 
+## Preview
+
+Tela inicial com painel, resumo da colecao e filtros:
+
+![Tela inicial do site](docs/site-home.png)
+
+Area da biblioteca com cards, preco medio e acoes de editar ou excluir:
+
+![Biblioteca de jogos no site](docs/site-library.png)
+
 ## O que o site faz
 
 - Mostra um painel com jogos da colecao, usando as fotos da estante como base inicial.
@@ -29,13 +39,3 @@ Catalogo pessoal para organizar a colecao de jogos em uma interface simples, bon
 
 - Os precos medios iniciais foram estimados com base em pesquisas no Mercado Livre em abril de 2026.
 - Como o mercado muda, voce pode editar a base exportando o JSON, ajustando os valores e importando novamente.
-
-## Publicar no GitHub
-
-Dentro desta pasta, rode:
-
-```powershell
-git add .
-git commit -m "Create static game collection site"
-gh repo create "Game Collection Library" --public --source . --remote origin --push
-```

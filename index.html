@@ -115,6 +115,7 @@
                 <th>Preco medio</th>
                 <th>Status</th>
                 <th>Foto</th>
+                <th>Acoes</th>
               </tr>
             </thead>
             <tbody id="games-table-body"></tbody>
@@ -125,7 +126,8 @@
       <section class="panel form-panel" id="form-panel">
         <div class="section-heading">
           <p class="eyebrow">Cadastro</p>
-          <h2>Adicionar novo item</h2>
+          <h2>Adicionar ou editar item</h2>
+          <p class="form-help" id="form-mode-label">Use o formulario para incluir um novo jogo ou atualizar um item existente.</p>
         </div>
 
         <form id="game-form" class="game-form">
@@ -189,9 +191,17 @@
             <input name="photo" type="file" accept="image/*">
           </label>
 
+          <label class="wide">
+            <span>Ou cole a URL da capa</span>
+            <input name="imageUrl" type="url" placeholder="https://...">
+          </label>
+
+          <p class="wide form-help" id="current-image-label">A imagem atual sera mantida se voce nao enviar outra.</p>
+
           <div class="form-actions wide">
-            <button class="primary" type="submit">Salvar jogo</button>
-            <button class="secondary" id="reset-storage" type="button">Remover jogos adicionados no navegador</button>
+            <button class="primary" id="submit-button" type="submit">Salvar jogo</button>
+            <button class="secondary hidden" id="cancel-edit" type="button">Cancelar edicao</button>
+            <button class="secondary" id="reset-storage" type="button">Restaurar colecao inicial</button>
           </div>
         </form>
       </section>
@@ -213,6 +223,10 @@
         <dl class="game-meta"></dl>
         <p class="game-notes"></p>
         <a class="game-source" href="" target="_blank" rel="noreferrer noopener"></a>
+        <div class="game-card-actions">
+          <button class="secondary action-button" data-action="edit" type="button">Editar</button>
+          <button class="danger action-button" data-action="delete" type="button">Excluir</button>
+        </div>
       </div>
     </article>
   </template>

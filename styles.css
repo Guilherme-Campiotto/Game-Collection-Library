@@ -381,6 +381,28 @@ textarea {
   text-decoration: underline;
 }
 
+.game-card-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.action-button {
+  padding: 10px 14px;
+  font-size: 0.9rem;
+}
+
+.danger {
+  color: #7b1b1b;
+  background: #f6dede;
+}
+
+.form-help {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
 .table-wrap {
   overflow-x: auto;
 }

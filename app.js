@@ -1,5 +1,6 @@
 (function () {
-  const STORAGE_KEY = "game-collection-library-custom-games";
+  const STORAGE_KEY = "game-collection-library-state-v2";
+  const LEGACY_KEY = "game-collection-library-custom-games";
   const VIEW_KEY = "game-collection-library-view-mode";
   const seedGames = Array.isArray(window.SEED_GAMES) ? window.SEED_GAMES : [];
 
@@ -24,24 +25,47 @@
     resetStorage: document.getElementById("reset-storage"),
     toggleView: document.getElementById("toggle-view"),
     scrollToForm: document.getElementById("scroll-to-form"),
-    formPanel: document.getElementById("form-panel")
+    formPanel: document.getElementById("form-panel"),
+    formModeLabel: document.getElementById("form-mode-label"),
+    currentImageLabel: document.getElementById("current-image-label"),
+    submitButton: document.getElementById("submit-button"),
+    cancelEdit: document.getElementById("cancel-edit")
   };
 
-  let customGames = loadCustomGames();
+  let games = loadGames();
+  let currentEditId = null;
   let viewMode = localStorage.getItem(VIEW_KEY) || "grid";
 
-  function loadCustomGames() {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      return raw ? JSON.parse(raw) : [];
-    } catch (error) {
-      console.warn("Nao foi possivel ler os jogos personalizados.", error);
-      return [];
-    }
+  function cloneSeeds() {
+    return seedGames.map((game) => ({ ...game }));
   }
 
-  function saveCustomGames() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(customGames));
+  function loadGames() {
+    try {
+      const persisted = localStorage.getItem(STORAGE_KEY);
+      if (persisted) {
+        const parsed = JSON.parse(persisted);
+        if (Array.isArray(parsed)) {
+          return parsed;
+        }
+      }
+
+      const legacy = localStorage.getItem(LEGACY_KEY);
+      if (legacy) {
+        const parsedLegacy = JSON.parse(legacy);
+        if (Array.isArray(parsedLegacy)) {
+          return [...cloneSeeds(), ...parsedLegacy];
+        }
+      }
+    } catch (error) {
+      console.warn("Nao foi possivel carregar a colecao salva.", error);
+    }
+
+    return cloneSeeds();
+  }
+
+  function saveGames() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(games));
   }
 
   function slugify(value) {
@@ -61,8 +85,13 @@
     }).format(value || 0);
   }
 
-  function buildFullCollection() {
-    return [...seedGames, ...customGames];
+  function escapeHtml(value) {
+    return String(value ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#39;");
   }
 
   function getFilterValues() {
@@ -99,14 +128,13 @@
   }
 
   function refreshFilterOptions() {
-    const collection = buildFullCollection();
-    populateSelect(elements.platformFilter, [...new Set(collection.map((game) => game.platform))].sort(), "plataformas");
-    populateSelect(elements.genreFilter, [...new Set(collection.map((game) => game.genre))].sort(), "generos");
-    populateSelect(elements.statusFilter, [...new Set(collection.map((game) => game.status))].sort(), "status");
+    populateSelect(elements.platformFilter, [...new Set(games.map((game) => game.platform))].sort(), "plataformas");
+    populateSelect(elements.genreFilter, [...new Set(games.map((game) => game.genre))].sort(), "generos");
+    populateSelect(elements.statusFilter, [...new Set(games.map((game) => game.status))].sort(), "status");
   }
 
-  function sortGames(games, sort) {
-    const sorted = [...games];
+  function sortGames(collection, sort) {
+    const sorted = [...collection];
     sorted.sort((first, second) => {
       switch (sort) {
         case "price-desc":
@@ -130,7 +158,7 @@
   function filterGames() {
     const { search, platform, genre, status, yearMin, priceMax, sort } = getFilterValues();
 
-    const filtered = buildFullCollection().filter((game) => {
+    const filtered = games.filter((game) => {
       const haystack = [
         game.title,
         game.platform,
@@ -148,7 +176,7 @@
         (!genre || game.genre === genre) &&
         (!status || game.status === status) &&
         game.releaseYear >= yearMin &&
-        game.averagePriceBrl <= priceMax
+        Number(game.averagePriceBrl) <= priceMax
       );
     });
 
@@ -186,16 +214,39 @@
     return wrapper;
   }
 
-  function renderCards(games) {
+  function createActionButtons(id) {
+    const wrapper = document.createElement("div");
+    wrapper.className = "game-card-actions";
+
+    const editButton = document.createElement("button");
+    editButton.type = "button";
+    editButton.className = "secondary action-button";
+    editButton.dataset.action = "edit";
+    editButton.dataset.id = id;
+    editButton.textContent = "Editar";
+
+    const deleteButton = document.createElement("button");
+    deleteButton.type = "button";
+    deleteButton.className = "danger action-button";
+    deleteButton.dataset.action = "delete";
+    deleteButton.dataset.id = id;
+    deleteButton.textContent = "Excluir";
+
+    wrapper.append(editButton, deleteButton);
+    return wrapper;
+  }
+
+  function renderCards(collection) {
     elements.gamesGrid.innerHTML = "";
 
-    if (!games.length) {
+    if (!collection.length) {
       elements.gamesGrid.innerHTML = "<p>Nenhum jogo encontrado com os filtros atuais.</p>";
       return;
     }
 
-    games.forEach((game) => {
+    collection.forEach((game) => {
       const fragment = elements.template.content.cloneNode(true);
+      const card = fragment.querySelector(".game-card");
       const image = fragment.querySelector(".game-image");
       const title = fragment.querySelector(".game-title");
       const platform = fragment.querySelector(".game-platform");
@@ -204,9 +255,11 @@
       const meta = fragment.querySelector(".game-meta");
       const notes = fragment.querySelector(".game-notes");
       const source = fragment.querySelector(".game-source");
+      const actions = fragment.querySelector(".game-card-actions");
 
+      card.dataset.id = game.id;
       image.src = game.image;
-      image.alt = `Foto de referencia para ${game.title}`;
+      image.alt = `Capa de ${game.title}`;
       title.textContent = game.title;
       platform.textContent = game.platform;
       price.textContent = currency(game.averagePriceBrl);
@@ -236,37 +289,40 @@
       } else {
         source.remove();
       }
+
+      actions.replaceWith(createActionButtons(game.id));
       elements.gamesGrid.appendChild(fragment);
     });
   }
 
-  function renderTable(games) {
+  function renderTable(collection) {
     elements.tableBody.innerHTML = "";
 
-    games.forEach((game) => {
+    collection.forEach((game) => {
       const row = document.createElement("tr");
       row.innerHTML = `
-        <td>${game.title}</td>
-        <td>${game.platform}</td>
-        <td>${game.genre}</td>
-        <td>${game.releaseYear}</td>
-        <td>${currency(game.averagePriceBrl)}</td>
-        <td>${game.status}</td>
-        <td><img class="mini-photo" src="${game.image}" alt="Foto de ${game.title}"></td>
+        <td>${escapeHtml(game.title)}</td>
+        <td>${escapeHtml(game.platform)}</td>
+        <td>${escapeHtml(game.genre)}</td>
+        <td>${escapeHtml(game.releaseYear)}</td>
+        <td>${escapeHtml(currency(game.averagePriceBrl))}</td>
+        <td>${escapeHtml(game.status)}</td>
+        <td><img class="mini-photo" src="${escapeHtml(game.image)}" alt="Capa de ${escapeHtml(game.title)}"></td>
+        <td></td>
       `;
+
+      row.lastElementChild.appendChild(createActionButtons(game.id));
       elements.tableBody.appendChild(row);
     });
   }
 
   function render() {
-    const fullCollection = buildFullCollection();
     const filtered = filterGames();
-
-    renderStats(fullCollection);
+    renderStats(games);
     renderCards(filtered);
     renderTable(filtered);
 
-    const totalValue = filtered.reduce((sum, game) => sum + game.averagePriceBrl, 0);
+    const totalValue = filtered.reduce((sum, game) => sum + Number(game.averagePriceBrl || 0), 0);
     elements.resultsCount.textContent = `${filtered.length} jogo(s) visiveis, somando ${currency(totalValue)} em valor medio.`;
     updateView();
   }
@@ -288,6 +344,44 @@
     });
   }
 
+  function setFormMode(game) {
+    const editing = Boolean(game);
+    currentEditId = editing ? game.id : null;
+    elements.cancelEdit.classList.toggle("hidden", !editing);
+    elements.submitButton.textContent = editing ? "Salvar alteracoes" : "Salvar jogo";
+    elements.formModeLabel.textContent = editing
+      ? `Editando: ${game.title}. Altere os campos e salve para atualizar o jogo.`
+      : "Use o formulario para incluir um novo jogo ou atualizar um item existente.";
+    elements.currentImageLabel.textContent = editing
+      ? `Imagem atual: ${game.image}`
+      : "A imagem atual sera mantida se voce nao enviar outra.";
+  }
+
+  function fillForm(game) {
+    elements.gameForm.elements.title.value = game.title;
+    elements.gameForm.elements.platform.value = game.platform;
+    elements.gameForm.elements.genre.value = game.genre;
+    elements.gameForm.elements.releaseYear.value = game.releaseYear;
+    elements.gameForm.elements.averagePriceBrl.value = game.averagePriceBrl;
+    elements.gameForm.elements.status.value = game.status;
+    elements.gameForm.elements.format.value = game.format;
+    elements.gameForm.elements.condition.value = game.condition || "";
+    elements.gameForm.elements.notes.value = game.notes || "";
+    elements.gameForm.elements.imageUrl.value = game.image?.startsWith("data:") ? "" : game.image || "";
+    elements.gameForm.elements.photo.value = "";
+    setFormMode(game);
+    elements.formPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function clearForm() {
+    elements.gameForm.reset();
+    setFormMode(null);
+  }
+
+  function findGame(id) {
+    return games.find((game) => game.id === id);
+  }
+
   async function handleFormSubmit(event) {
     event.preventDefault();
 
@@ -298,14 +392,18 @@
     const releaseYear = Number(formData.get("releaseYear"));
     const averagePriceBrl = Number(formData.get("averagePriceBrl"));
     const photoFile = formData.get("photo");
+    const imageUrl = formData.get("imageUrl").trim();
+    const existing = currentEditId ? findGame(currentEditId) : null;
 
-    let image = "photo-1.jpeg";
+    let image = existing?.image || "photo-1.jpeg";
     if (photoFile && photoFile.size) {
       image = await fileToDataUrl(photoFile);
+    } else if (imageUrl) {
+      image = imageUrl;
     }
 
-    customGames.unshift({
-      id: `${slugify(platform)}-${slugify(title)}-${Date.now()}`,
+    const payload = {
+      id: existing?.id || `${slugify(platform)}-${slugify(title)}-${Date.now()}`,
       title,
       platform,
       genre,
@@ -314,21 +412,27 @@
       status: formData.get("status"),
       format: formData.get("format"),
       condition: formData.get("condition").trim() || "Nao informada",
-      location: "Cadastro manual",
+      location: existing?.location || "Cadastro manual",
       image,
-      notes: formData.get("notes").trim() || "Adicionado manualmente pelo formulario.",
-      sourceUrl: "",
-      sourceLabel: "Manual"
-    });
+      notes: formData.get("notes").trim() || "Sem observacoes.",
+      sourceUrl: existing?.sourceUrl || "",
+      sourceLabel: existing?.sourceLabel || "Manual"
+    };
 
-    saveCustomGames();
+    if (existing) {
+      games = games.map((game) => (game.id === existing.id ? payload : game));
+    } else {
+      games.unshift(payload);
+    }
+
+    saveGames();
     refreshFilterOptions();
-    elements.gameForm.reset();
+    clearForm();
     render();
   }
 
   function exportCollection() {
-    const blob = new Blob([JSON.stringify(buildFullCollection(), null, 2)], { type: "application/json" });
+    const blob = new Blob([JSON.stringify(games, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement("a");
     anchor.href = url;
@@ -345,14 +449,14 @@
 
     const text = await file.text();
     const imported = JSON.parse(text);
-
     if (!Array.isArray(imported)) {
       throw new Error("O arquivo precisa conter um array de jogos.");
     }
 
-    customGames = imported.filter((item) => !seedGames.some((seed) => seed.id === item.id));
-    saveCustomGames();
+    games = imported;
+    saveGames();
     refreshFilterOptions();
+    clearForm();
     render();
     event.target.value = "";
   }
@@ -369,10 +473,54 @@
   }
 
   function resetStorage() {
-    customGames = [];
-    saveCustomGames();
+    if (!confirm("Isso vai restaurar a colecao inicial e remover alteracoes salvas no navegador. Continuar?")) {
+      return;
+    }
+
+    games = cloneSeeds();
+    localStorage.removeItem(LEGACY_KEY);
+    saveGames();
     refreshFilterOptions();
+    clearForm();
     render();
+  }
+
+  function deleteGame(id) {
+    const game = findGame(id);
+    if (!game) {
+      return;
+    }
+
+    if (!confirm(`Excluir "${game.title}" da colecao?`)) {
+      return;
+    }
+
+    games = games.filter((item) => item.id !== id);
+    saveGames();
+    refreshFilterOptions();
+    if (currentEditId === id) {
+      clearForm();
+    }
+    render();
+  }
+
+  function handleActionClick(event) {
+    const button = event.target.closest("[data-action]");
+    if (!button) {
+      return;
+    }
+
+    const { action, id } = button.dataset;
+    if (action === "edit") {
+      const game = findGame(id);
+      if (game) {
+        fillForm(game);
+      }
+    }
+
+    if (action === "delete") {
+      deleteGame(id);
+    }
   }
 
   function bindEvents() {
@@ -389,9 +537,7 @@
     elements.gameForm.addEventListener("submit", handleFormSubmit);
     elements.exportButton.addEventListener("click", exportCollection);
     elements.importInput.addEventListener("change", (event) => {
-      importCollection(event).catch((error) => {
-        alert(error.message);
-      });
+      importCollection(event).catch((error) => alert(error.message));
     });
     elements.clearFilters.addEventListener("click", clearFilters);
     elements.resetStorage.addEventListener("click", resetStorage);
@@ -402,9 +548,13 @@
     elements.scrollToForm.addEventListener("click", () => {
       elements.formPanel.scrollIntoView({ behavior: "smooth", block: "start" });
     });
+    elements.cancelEdit.addEventListener("click", clearForm);
+    elements.gamesGrid.addEventListener("click", handleActionClick);
+    elements.tableBody.addEventListener("click", handleActionClick);
   }
 
   refreshFilterOptions();
   bindEvents();
+  clearForm();
   render();
 })();

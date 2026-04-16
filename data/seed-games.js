@@ -266,7 +266,7 @@ window.SEED_GAMES = [
     format: "Fisica",
     condition: "Completo",
     location: "Foto 1",
-    image: "photo-1.jpeg",
+    image: "https://cdn.thegamesdb.net/images/original/boxart/front/50323-1.jpg",
     notes: "Lombada visivel na fileira inferior esquerda. Faixa usada observada entre R$79 e R$119,60.",
     sourceUrl: "https://lista.mercadolivre.com.br/kingdom-hearts-ps4-usado",
     sourceLabel: "Mercado Livre"
@@ -282,7 +282,7 @@ window.SEED_GAMES = [
     format: "Fisica",
     condition: "Completo",
     location: "Foto 1",
-    image: "photo-1.jpeg",
+    image: "https://cdn.thegamesdb.net/images/original/boxart/front/96725-1.jpg",
     notes: "Lombada visivel na fileira inferior esquerda. Pesquisa usada retornou anuncios entre R$79 e R$112.",
     sourceUrl: "https://lista.mercadolivre.com.br/metal-gear-solid-5-ps4-usado",
     sourceLabel: "Mercado Livre"
@@ -314,7 +314,7 @@ window.SEED_GAMES = [
     format: "Fisica",
     condition: "Completo",
     location: "Foto 1",
-    image: "photo-1.jpeg",
+    image: "https://cdn.thegamesdb.net/images/original/boxart/front/55247-1.jpg",
     notes: "Lombada visivel na fileira inferior. Busca usada mostrou forte concentracao perto de R$119.",
     sourceUrl: "https://lista.mercadolivre.com.br/red-dead-redemption-2-usado-ps4",
     sourceLabel: "Mercado Livre"
@@ -378,7 +378,7 @@ window.SEED_GAMES = [
     format: "Fisica",
     condition: "Completo",
     location: "Foto 4",
-    image: "photo-4.jpeg",
+    image: "https://cdn.thegamesdb.net/images/original/boxart/front/24327-1.jpg",
     notes: "Lombada visivel na fileira esquerda. Faixa usada observada entre R$119 e R$149,90.",
     sourceUrl: "https://lista.mercadolivre.com.br/cyberpunk-2077-ps4-usado",
     sourceLabel: "Mercado Livre"
@@ -410,7 +410,7 @@ window.SEED_GAMES = [
     format: "Fisica",
     condition: "Completo",
     location: "Foto 4",
-    image: "photo-4.jpeg",
+    image: "https://cdn.thegamesdb.net/images/original/boxart/front/55760-1.jpg",
     notes: "Lombada visivel na fileira direita. A midia fisica aparece com preco mais alto; anuncio usado visto por R$149,90.",
     sourceUrl: "https://lista.mercadolivre.com.br/jogo-hades-ps4",
     sourceLabel: "Mercado Livre"
@@ -426,7 +426,7 @@ window.SEED_GAMES = [
     format: "Fisica",
     condition: "Completo",
     location: "Foto 4",
-    image: "photo-4.jpeg",
+    image: "https://cdn.thegamesdb.net/images/original/boxart/front/111379-1.jpg",
     notes: "Lombada visivel na fileira direita. Faixa usada principal entre R$60 e R$79.",
     sourceUrl: "https://lista.mercadolivre.com.br/horizon-zero-dawn-usado",
     sourceLabel: "Mercado Livre"
@@ -442,7 +442,7 @@ window.SEED_GAMES = [
     format: "Fisica",
     condition: "Completo",
     location: "Foto 4",
-    image: "photo-4.jpeg",
+    image: "https://cdn.thegamesdb.net/images/original/boxart/front/19565-1.jpg",
     notes: "Lombada visivel na borda direita da Foto 4. Anuncio usado conferido por R$70.",
     sourceUrl: "https://www.mercadolivre.com.br/infamous-second-son-dublado-portugues-playstation-4-ps4/up/MLBU3159832585",
     sourceLabel: "Mercado Livre"
@@ -458,7 +458,7 @@ window.SEED_GAMES = [
     format: "Fisica",
     condition: "Completo",
     location: "Foto 2",
-    image: "photo-2.jpeg",
+    image: "https://cdn.thegamesdb.net/images/original/boxart/front/9058-1.jpg",
     notes: "Lombada visivel ao lado de Arkham Asylum. Faixa usada observada entre R$39,90 e R$69.",
     sourceUrl: "https://lista.mercadolivre.com.br/batman-arkham-city-ps3-usado",
     sourceLabel: "Mercado Livre"
@@ -474,7 +474,7 @@ window.SEED_GAMES = [
     format: "Fisica",
     condition: "Completo",
     location: "Foto 2",
-    image: "photo-2.jpeg",
+    image: "https://cdn.thegamesdb.net/images/original/boxart/front/13359-1.jpg",
     notes: "Lombada visivel na parte direita da estante. Faixa usada recorrente entre R$67 e R$79,90.",
     sourceUrl: "https://lista.mercadolivre.com.br/god-of-war-ascension-ps3-usado",
     sourceLabel: "Mercado Livre"
