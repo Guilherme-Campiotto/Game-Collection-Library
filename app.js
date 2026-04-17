@@ -3,7 +3,9 @@
   const LEGACY_KEY = "game-collection-library-custom-games";
   const VIEW_KEY = "game-collection-library-view-mode";
   const LANGUAGE_KEY = "game-collection-library-language";
+  const MAX_IMAGE_SIZE_BYTES = 2 * 1024 * 1024;
   const seedGames = Array.isArray(window.SEED_GAMES) ? window.SEED_GAMES : [];
+  const seedImageMap = Object.fromEntries(seedGames.map((game) => [game.id, game.image]));
 
   const translations = {
     "pt-BR": {
@@ -68,7 +70,7 @@
       formNotesLabel: "Observacoes",
       formNotesPlaceholder: "Edicao, steelbook, idioma, observacoes de compra...",
       formPhotoLabel: "Foto da capa ou da midia",
-      formImageUrlLabel: "Ou cole a URL da capa",
+      formPhotoHelp: "Envie uma imagem JPG, PNG ou WebP com tamanho maximo de 2 MB.",
       currentImageDefault: "A imagem atual sera mantida se voce nao enviar outra.",
       currentImageEditing: (image) => `Imagem atual: ${image}`,
       saveGame: "Salvar jogo",
@@ -108,6 +110,7 @@
       toastDeleteSuccess: (title) => `"${title}" excluido com sucesso.`,
       toastGenericError: "Algo deu errado. Tente novamente.",
       toastReadError: "Nao foi possivel ler o arquivo selecionado.",
+      toastImageTooLarge: "A imagem excede o limite de 2 MB.",
       status: {
         "Na fila": "Na fila",
         Jogando: "Jogando",
@@ -183,7 +186,7 @@
       formNotesLabel: "Notes",
       formNotesPlaceholder: "Edition, steelbook, language, purchase notes...",
       formPhotoLabel: "Cover or media photo",
-      formImageUrlLabel: "Or paste the cover URL",
+      formPhotoHelp: "Upload a JPG, PNG, or WebP image up to 2 MB.",
       currentImageDefault: "The current image will be kept if you do not upload another one.",
       currentImageEditing: (image) => `Current image: ${image}`,
       saveGame: "Save game",
@@ -223,6 +226,7 @@
       toastDeleteSuccess: (title) => `"${title}" deleted successfully.`,
       toastGenericError: "Something went wrong. Please try again.",
       toastReadError: "The selected file could not be read.",
+      toastImageTooLarge: "The image exceeds the 2 MB limit.",
       status: {
         "Na fila": "Backlog",
         Jogando: "Playing",
@@ -303,7 +307,7 @@
     formConditionLabel: document.getElementById("form-condition-label"),
     formNotesLabel: document.getElementById("form-notes-label"),
     formPhotoLabel: document.getElementById("form-photo-label"),
-    formImageUrlLabel: document.getElementById("form-image-url-label")
+    formPhotoHelp: document.getElementById("form-photo-help")
   };
 
   let games = loadGames();
@@ -320,13 +324,30 @@
     return seedGames.map((game) => ({ ...game }));
   }
 
+  function normalizeGame(game) {
+    if (!game || typeof game !== "object") {
+      return game;
+    }
+
+    const normalized = { ...game };
+    if (
+      seedImageMap[normalized.id] &&
+      typeof normalized.image === "string" &&
+      (normalized.image.startsWith("http") || /^photo-\d+\.jpe?g$/i.test(normalized.image))
+    ) {
+      normalized.image = seedImageMap[normalized.id];
+    }
+
+    return normalized;
+  }
+
   function loadGames() {
     try {
       const persisted = localStorage.getItem(STORAGE_KEY);
       if (persisted) {
         const parsed = JSON.parse(persisted);
         if (Array.isArray(parsed)) {
-          return parsed;
+          return parsed.map(normalizeGame);
         }
       }
 
@@ -334,7 +355,7 @@
       if (legacy) {
         const parsedLegacy = JSON.parse(legacy);
         if (Array.isArray(parsedLegacy)) {
-          return [...cloneSeeds(), ...parsedLegacy];
+          return [...cloneSeeds(), ...parsedLegacy.map(normalizeGame)];
         }
       }
     } catch (error) {
@@ -530,7 +551,7 @@
     elements.formNotesLabel.textContent = t().formNotesLabel;
     elements.gameForm.elements.notes.placeholder = t().formNotesPlaceholder;
     elements.formPhotoLabel.textContent = t().formPhotoLabel;
-    elements.formImageUrlLabel.textContent = t().formImageUrlLabel;
+    elements.formPhotoHelp.textContent = t().formPhotoHelp;
     elements.submitButton.textContent = currentEditId ? t().saveChanges : t().saveGame;
     elements.cancelEdit.textContent = t().cancelEdit;
     elements.resetStorage.textContent = t().restoreCollection;
@@ -752,6 +773,11 @@
 
   function fileToDataUrl(file) {
     return new Promise((resolve, reject) => {
+      if (file.size > MAX_IMAGE_SIZE_BYTES) {
+        reject(new Error(t().toastImageTooLarge));
+        return;
+      }
+
       const reader = new FileReader();
       reader.onload = () => resolve(reader.result);
       reader.onerror = () => reject(new Error(t().toastReadError));
@@ -778,7 +804,6 @@
     elements.gameForm.elements.format.value = game.format;
     elements.gameForm.elements.condition.value = game.condition || "";
     elements.gameForm.elements.notes.value = game.notes || "";
-    elements.gameForm.elements.imageUrl.value = game.image?.startsWith("data:") ? "" : game.image || "";
     elements.gameForm.elements.photo.value = "";
     setFormMode(game);
     elements.formPanel.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -804,14 +829,11 @@
       const releaseYear = Number(formData.get("releaseYear"));
       const averagePriceBrl = Number(formData.get("averagePriceBrl"));
       const photoFile = formData.get("photo");
-      const imageUrl = formData.get("imageUrl").trim();
       const existing = currentEditId ? findGame(currentEditId) : null;
 
       let image = existing?.image || "photo-1.jpeg";
       if (photoFile && photoFile.size) {
         image = await fileToDataUrl(photoFile);
-      } else if (imageUrl) {
-        image = imageUrl;
       }
 
       const payload = {
