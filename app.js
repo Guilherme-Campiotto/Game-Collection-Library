@@ -12,7 +12,8 @@
       locale: "pt-BR",
       htmlLang: "pt-BR",
       heroEyebrow: "Colecao Pessoal",
-      languageLabel: "Idioma",
+      navHome: "Biblioteca",
+      navRare: "Jogos mais raros",
       heroText:
         "Um catalogo visual da sua biblioteca de jogos com cadastro rapido, filtros por plataforma e um painel para acompanhar preco medio de mercado, genero, ano e status da colecao.",
       heroGalleryLabel: "Fotos da colecao",
@@ -20,6 +21,7 @@
       heroGalleryAlt2: "Estante com jogos de PS3",
       heroGalleryAlt3: "Outra estante com jogos de PS4",
       addNewGame: "Cadastrar novo jogo",
+      rarePageCta: "Ver jogos raros",
       exportJson: "Exportar JSON",
       collectionSummary: "Resumo da colecao",
       statsItems: "Itens cadastrados",
@@ -128,7 +130,8 @@
       locale: "en-US",
       htmlLang: "en",
       heroEyebrow: "Personal Collection",
-      languageLabel: "Language",
+      navHome: "Library",
+      navRare: "Rarest games",
       heroText:
         "A visual catalog for your game library with quick registration, platform filters, and a dashboard to track average market price, genre, release year, and collection status.",
       heroGalleryLabel: "Collection photos",
@@ -136,6 +139,7 @@
       heroGalleryAlt2: "Shelf with PS3 games",
       heroGalleryAlt3: "Another shelf with PS4 games",
       addNewGame: "Add new game",
+      rarePageCta: "View rare games",
       exportJson: "Export JSON",
       collectionSummary: "Collection summary",
       statsItems: "Registered items",
@@ -264,15 +268,17 @@
     resetStorage: document.getElementById("reset-storage"),
     toggleView: document.getElementById("toggle-view"),
     scrollToForm: document.getElementById("scroll-to-form"),
+    heroRareLink: document.getElementById("hero-rare-link"),
     formPanel: document.getElementById("form-panel"),
     formModeLabel: document.getElementById("form-mode-label"),
     currentImageLabel: document.getElementById("current-image-label"),
     submitButton: document.getElementById("submit-button"),
     cancelEdit: document.getElementById("cancel-edit"),
-    languageSelect: document.getElementById("language-select"),
+    languageToggle: document.getElementById("language-toggle"),
+    navHomeLink: document.getElementById("nav-home-link"),
+    navRareLink: document.getElementById("nav-rare-link"),
     toastContainer: document.getElementById("toast-container"),
     heroEyebrow: document.getElementById("hero-eyebrow"),
-    languageLabel: document.getElementById("language-label"),
     heroText: document.getElementById("hero-text"),
     heroGallery: document.getElementById("hero-gallery"),
     controlsEyebrow: document.getElementById("controls-eyebrow"),
@@ -512,9 +518,9 @@
 
   function updateStaticTexts() {
     elements.html.lang = t().htmlLang;
-    elements.languageSelect.value = currentLanguage;
     elements.heroEyebrow.textContent = t().heroEyebrow;
-    elements.languageLabel.textContent = t().languageLabel;
+    elements.navHomeLink.textContent = t().navHome;
+    elements.navRareLink.textContent = t().navRare;
     elements.heroText.textContent = t().heroText;
     elements.heroGallery.setAttribute("aria-label", t().heroGalleryLabel);
 
@@ -524,6 +530,7 @@
     if (heroImages[2]) heroImages[2].alt = t().heroGalleryAlt3;
 
     elements.scrollToForm.textContent = t().addNewGame;
+    elements.heroRareLink.textContent = t().rarePageCta;
     elements.exportButton.textContent = t().exportJson;
     elements.statsGrid.setAttribute("aria-label", t().collectionSummary);
     elements.controlsEyebrow.textContent = t().controlsEyebrow;
@@ -591,6 +598,12 @@
       elements.formModeLabel.textContent = t().formModeDefault;
       elements.currentImageLabel.textContent = t().currentImageDefault;
     }
+
+    elements.languageToggle.classList.toggle("is-en", currentLanguage === "en");
+    elements.languageToggle.setAttribute(
+      "aria-label",
+      currentLanguage === "en" ? "Switch to Portuguese" : "Switch to English"
+    );
   }
 
   function sortGames(collection, sort) {
@@ -1029,8 +1042,8 @@
     elements.cancelEdit.addEventListener("click", clearForm);
     elements.gamesGrid.addEventListener("click", handleActionClick);
     elements.tableBody.addEventListener("click", handleActionClick);
-    elements.languageSelect.addEventListener("change", (event) => {
-      setLanguage(event.target.value);
+    elements.languageToggle.addEventListener("click", () => {
+      setLanguage(currentLanguage === "pt-BR" ? "en" : "pt-BR");
     });
   }
 

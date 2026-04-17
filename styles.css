@@ -83,6 +83,37 @@ textarea {
   flex-wrap: wrap;
 }
 
+.site-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 14px 0 0;
+}
+
+.site-nav-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(62, 49, 29, 0.12);
+  background: rgba(255, 255, 255, 0.64);
+  color: var(--accent-strong);
+  text-decoration: none;
+  font-weight: 700;
+  transition: transform 180ms ease, background-color 180ms ease, border-color 180ms ease;
+}
+
+.site-nav-link:hover {
+  transform: translateY(-1px);
+  background: rgba(216, 239, 232, 0.95);
+}
+
+.site-nav-link.active {
+  background: var(--accent-soft);
+  border-color: rgba(15, 109, 98, 0.24);
+}
+
 .eyebrow {
   margin: 0 0 8px;
   color: var(--warm);
@@ -132,27 +163,79 @@ h2 {
   margin-top: 24px;
 }
 
-.language-switch {
+.floating-language-toggle {
+  position: fixed;
+  top: 50%;
+  right: 12px;
+  z-index: 1000;
   display: inline-flex;
-  flex-direction: row;
   align-items: center;
-  gap: 10px;
-  color: var(--muted);
-  font-size: 0.9rem;
+  gap: 8px;
+  padding: 8px 10px;
+  border: 1px solid rgba(62, 49, 29, 0.1);
+  border-radius: 999px;
+  background: rgba(255, 250, 242, 0.78);
+  box-shadow: 0 12px 26px rgba(56, 40, 21, 0.12);
+  transform: translateY(-50%);
+  backdrop-filter: blur(10px);
 }
 
-.language-switch span {
-  color: var(--ink);
+.floating-language-toggle:hover {
+  transform: translateY(calc(-50% - 1px));
+}
+
+.floating-language-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(15, 109, 98, 0.12);
+  color: var(--accent-strong);
+  font-size: 0.78rem;
   font-weight: 700;
 }
 
-.language-switch select {
-  min-width: 132px;
-  padding: 10px 12px;
+.floating-language-track {
+  position: relative;
+  display: inline-grid;
+  grid-template-columns: repeat(2, 1fr);
+  align-items: center;
+  min-width: 70px;
+  padding: 3px;
+  border-radius: 999px;
+  background: rgba(15, 109, 98, 0.08);
+}
+
+.floating-language-thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: calc(50% - 3px);
+  height: calc(100% - 6px);
+  border-radius: 999px;
+  background: rgba(15, 109, 98, 0.18);
+  transition: transform 180ms ease;
+}
+
+.floating-language-toggle.is-en .floating-language-thumb {
+  transform: translateX(100%);
+}
+
+.floating-language-option {
+  position: relative;
+  z-index: 1;
+  padding: 5px 0;
+  color: var(--accent-strong);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-align: center;
 }
 
 button,
-.import-label {
+.import-label,
+.button-link {
   border: none;
   border-radius: 999px;
   padding: 12px 18px;
@@ -161,7 +244,8 @@ button,
 }
 
 button:hover,
-.import-label:hover {
+.import-label:hover,
+.button-link:hover {
   transform: translateY(-1px);
 }
 
@@ -172,9 +256,17 @@ button:hover,
 }
 
 .secondary,
-.import-label {
+.import-label,
+.button-link {
   color: var(--accent-strong);
   background: var(--accent-soft);
+}
+
+.button-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
 }
 
 .hero-gallery {
@@ -434,6 +526,120 @@ textarea {
   overflow-x: auto;
 }
 
+.rare-hero {
+  grid-template-columns: 1fr;
+  align-items: start;
+}
+
+.rare-podium {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+.podium-card {
+  position: relative;
+  overflow: hidden;
+  min-height: 360px;
+  padding: 18px;
+  border-radius: 24px;
+  color: white;
+  background:
+    linear-gradient(180deg, rgba(8, 28, 41, 0.12), rgba(8, 28, 41, 0.88)),
+    radial-gradient(circle at top, rgba(255, 255, 255, 0.18), transparent 38%);
+  box-shadow: 0 20px 36px rgba(29, 20, 10, 0.18);
+  isolation: isolate;
+}
+
+.podium-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: var(--podium-image);
+  background-size: cover;
+  background-position: center;
+  filter: saturate(1.05);
+  z-index: -2;
+}
+
+.podium-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(15, 15, 15, 0.08), rgba(15, 15, 15, 0.9));
+  z-index: -1;
+}
+
+.podium-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: rgba(255, 250, 242, 0.94);
+  color: var(--accent-strong);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.podium-rank-label {
+  margin: 16px 0 0;
+  color: rgba(255, 255, 255, 0.8);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.podium-title {
+  margin-top: 8px;
+  font-size: clamp(1.8rem, 2.6vw, 2.6rem);
+  line-height: 1;
+}
+
+.podium-meta {
+  margin-top: 14px;
+  display: grid;
+  gap: 10px;
+}
+
+.podium-meta span {
+  display: inline-flex;
+  width: fit-content;
+  max-width: 100%;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(12px);
+  font-weight: 700;
+}
+
+.podium-price {
+  margin-top: 18px;
+  font-size: 2rem;
+  font-weight: 700;
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+.podium-note {
+  margin-top: 10px;
+  color: rgba(255, 255, 255, 0.82);
+  line-height: 1.5;
+}
+
+.podium-empty {
+  padding: 24px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.7);
+  color: var(--muted);
+}
+
+.rare-games-table tbody tr:nth-child(odd) {
+  background: rgba(255, 255, 255, 0.52);
+}
+
 .games-table {
   width: 100%;
   border-collapse: collapse;
@@ -525,7 +731,8 @@ textarea {
   .controls-grid,
   .game-form,
   .stats-grid,
-  .games-grid {
+  .games-grid,
+  .rare-podium {
     grid-template-columns: repeat(2, 1fr);
   }
 
@@ -550,12 +757,17 @@ textarea {
   .stats-grid,
   .controls-grid,
   .game-form,
-  .games-grid {
+  .games-grid,
+  .rare-podium {
     grid-template-columns: 1fr;
   }
 
   .hero-photo.tall {
     grid-row: auto;
+  }
+
+  .podium-card {
+    min-height: 320px;
   }
 
   .game-meta {
@@ -566,5 +778,9 @@ textarea {
     right: 10px;
     bottom: 10px;
     left: 10px;
+  }
+
+  .floating-language-toggle {
+    right: 10px;
   }
 }
