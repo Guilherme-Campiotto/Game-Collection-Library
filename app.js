@@ -4,8 +4,11 @@
   const VIEW_KEY = "game-collection-library-view-mode";
   const LANGUAGE_KEY = "game-collection-library-language";
   const MAX_IMAGE_SIZE_BYTES = 2 * 1024 * 1024;
+  const COLLECTION_API_URL = "/api/collection";
+  const UPLOAD_API_URL = "/api/upload";
   const seedGames = Array.isArray(window.SEED_GAMES) ? window.SEED_GAMES : [];
   const seedImageMap = Object.fromEntries(seedGames.map((game) => [game.id, game.image]));
+  const supportsProjectStorage = window.location.protocol.startsWith("http");
 
   const translations = {
     "pt-BR": {
@@ -316,7 +319,7 @@
     formPhotoHelp: document.getElementById("form-photo-help")
   };
 
-  let games = loadGames();
+  let games = cloneSeeds();
   let currentEditId = null;
   let viewMode = localStorage.getItem(VIEW_KEY) || "grid";
   let currentLanguage = localStorage.getItem(LANGUAGE_KEY) || "pt-BR";
@@ -390,6 +393,41 @@
 
   function saveGames() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(games));
+  }
+
+  async function loadProjectGames() {
+    const response = await fetch(COLLECTION_API_URL, { cache: "no-store" });
+    if (!response.ok) {
+      throw new Error("Nao foi possivel carregar a colecao do projeto.");
+    }
+
+    const payload = await response.json();
+    const collection = Array.isArray(payload) ? payload : payload.games;
+    if (!Array.isArray(collection)) {
+      throw new Error("A resposta da colecao do projeto e invalida.");
+    }
+
+    return mergeWithSeeds(collection);
+  }
+
+  async function persistGames() {
+    saveGames();
+
+    if (!supportsProjectStorage) {
+      return;
+    }
+
+    const response = await fetch(COLLECTION_API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ games })
+    });
+
+    if (!response.ok) {
+      throw new Error("Nao foi possivel salvar a colecao no projeto.");
+    }
   }
 
   function saveLanguage() {
@@ -814,6 +852,36 @@
     });
   }
 
+  async function uploadCover(file, title, platform) {
+    const dataUrl = await fileToDataUrl(file);
+
+    if (!supportsProjectStorage) {
+      return dataUrl;
+    }
+
+    const response = await fetch(UPLOAD_API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        fileName: `${platform}-${title}`,
+        dataUrl
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(t().toastGenericError);
+    }
+
+    const payload = await response.json();
+    if (!payload.imagePath) {
+      throw new Error(t().toastGenericError);
+    }
+
+    return payload.imagePath;
+  }
+
   function setFormMode(game) {
     const editing = Boolean(game);
     currentEditId = editing ? game.id : null;
@@ -862,7 +930,7 @@
 
       let image = existing?.image || "photo-1.jpeg";
       if (photoFile && photoFile.size) {
-        image = await fileToDataUrl(photoFile);
+        image = await uploadCover(photoFile, title, platform);
       }
 
       const payload = {
@@ -888,7 +956,7 @@
         games.unshift(payload);
       }
 
-      saveGames();
+      await persistGames();
       refreshFilterOptions();
       clearForm();
       updateStaticTexts();
@@ -923,8 +991,8 @@
         throw new Error(t().importError);
       }
 
-      games = imported;
-      saveGames();
+      games = mergeWithSeeds(imported);
+      await persistGames();
       refreshFilterOptions();
       clearForm();
       updateStaticTexts();
@@ -947,21 +1015,21 @@
     render();
   }
 
-  function resetStorage() {
+  async function resetStorage() {
     if (!confirm(t().gameAlertReset)) {
       return;
     }
 
     games = cloneSeeds();
     localStorage.removeItem(LEGACY_KEY);
-    saveGames();
+    await persistGames();
     refreshFilterOptions();
     clearForm();
     updateStaticTexts();
     render();
   }
 
-  function deleteGame(id) {
+  async function deleteGame(id) {
     const game = findGame(id);
     if (!game) {
       showToast("error", t().toastGenericError);
@@ -973,7 +1041,7 @@
     }
 
     games = games.filter((item) => item.id !== id);
-    saveGames();
+    await persistGames();
     refreshFilterOptions();
     if (currentEditId === id) {
       clearForm();
@@ -998,7 +1066,10 @@
     }
 
     if (action === "delete") {
-      deleteGame(id);
+      deleteGame(id).catch((error) => {
+        console.error(error);
+        showToast("error", error.message || t().toastGenericError);
+      });
     }
   }
 
@@ -1030,7 +1101,12 @@
       });
     });
     elements.clearFilters.addEventListener("click", clearFilters);
-    elements.resetStorage.addEventListener("click", resetStorage);
+    elements.resetStorage.addEventListener("click", () => {
+      resetStorage().catch((error) => {
+        console.error(error);
+        showToast("error", error.message || t().toastGenericError);
+      });
+    });
     elements.toggleView.addEventListener("click", () => {
       viewMode = viewMode === "grid" ? "table" : "grid";
       updateView();
@@ -1046,9 +1122,30 @@
     });
   }
 
-  refreshFilterOptions();
-  bindEvents();
-  clearForm();
-  updateStaticTexts();
-  render();
+  async function initializeApp() {
+    try {
+      games = supportsProjectStorage ? await loadProjectGames() : loadGames();
+      saveGames();
+    } catch (error) {
+      console.warn("Nao foi possivel carregar a colecao do projeto, usando fallback local.", error);
+      games = loadGames();
+    }
+
+    refreshFilterOptions();
+    bindEvents();
+    clearForm();
+    updateStaticTexts();
+    render();
+  }
+
+  initializeApp().catch((error) => {
+    console.error(error);
+    games = loadGames();
+    refreshFilterOptions();
+    bindEvents();
+    clearForm();
+    updateStaticTexts();
+    render();
+    showToast("error", error.message || t().toastGenericError);
+  });
 })();

@@ -17,7 +17,7 @@ Area da biblioteca com cards, preco medio e acoes de editar ou excluir:
 - Mostra um painel com jogos da colecao, usando as fotos da estante como base inicial.
 - Permite buscar, filtrar e ordenar por plataforma, genero, status, ano e preco medio.
 - Traz um formulario para cadastrar novos itens direto no navegador.
-- Salva os novos itens em `localStorage`.
+- Quando aberto com o servidor local em `npm start`, salva a colecao em `data/library-games.json` e as novas capas em `assets/covers/`.
 - Permite exportar e importar os dados em JSON.
 
 ## Arquivos principais
@@ -25,15 +25,22 @@ Area da biblioteca com cards, preco medio e acoes de editar ou excluir:
 - `index.html`: estrutura do site
 - `styles.css`: visual da interface
 - `app.js`: logica de filtros, cadastro, persistencia e exportacao
+- `server.js`: servidor local para salvar colecao e uploads dentro do projeto
 - `data/seed-games.js`: jogos iniciais identificados nas fotos
+- `data/library-games.json`: arquivo criado automaticamente com a sua colecao salva
 
 ## Como usar
 
-1. Abra o arquivo `index.html` no navegador.
-2. Explore os jogos cadastrados inicialmente.
-3. Use o formulario para adicionar novos jogos com foto.
-4. Clique em `Exportar JSON` para salvar uma copia da colecao.
-5. Use `Importar JSON` para restaurar ou migrar seus dados.
+1. Na pasta do projeto, rode `npm start`.
+2. Abra `http://127.0.0.1:3000` no navegador.
+3. Use o formulario para adicionar ou editar jogos.
+4. Quando enviar uma capa nova, o arquivo sera salvo em `assets/covers/`.
+5. As alteracoes da colecao ficam persistidas em `data/library-games.json`.
+
+## Modo sem servidor
+
+1. Se voce abrir `index.html` diretamente no navegador, o site ainda funciona.
+2. Nesse modo, as alteracoes continuam sendo salvas apenas no `localStorage`.
 
 ## Observacoes sobre os precos
 

@@ -2,8 +2,10 @@
   const STORAGE_KEY = "game-collection-library-state-v2";
   const LEGACY_KEY = "game-collection-library-custom-games";
   const LANGUAGE_KEY = "game-collection-library-language";
+  const COLLECTION_API_URL = "/api/collection";
   const seedGames = Array.isArray(window.SEED_GAMES) ? window.SEED_GAMES : [];
   const seedImageMap = Object.fromEntries(seedGames.map((game) => [game.id, game.image]));
+  const supportsProjectStorage = window.location.protocol.startsWith("http");
 
   const translations = {
     "pt-BR": {
@@ -149,6 +151,21 @@
     return cloneSeeds();
   }
 
+  async function loadProjectGames() {
+    const response = await fetch(COLLECTION_API_URL, { cache: "no-store" });
+    if (!response.ok) {
+      throw new Error("Nao foi possivel carregar a colecao do projeto.");
+    }
+
+    const payload = await response.json();
+    const collection = Array.isArray(payload) ? payload : payload.games;
+    if (!Array.isArray(collection)) {
+      throw new Error("A resposta da colecao do projeto e invalida.");
+    }
+
+    return mergeWithSeeds(collection);
+  }
+
   function saveLanguage() {
     localStorage.setItem(LANGUAGE_KEY, currentLanguage);
   }
@@ -256,8 +273,8 @@
     );
   }
 
-  function render() {
-    const sortedGames = sortByPrice(loadGames());
+  function render(games) {
+    const sortedGames = sortByPrice(games);
     renderTopThree(sortedGames.slice(0, 3));
     renderTable(sortedGames.slice(3));
   }
@@ -266,13 +283,30 @@
     currentLanguage = language in translations ? language : "pt-BR";
     saveLanguage();
     updateStaticTexts();
-    render();
+    initializePage();
   }
 
   elements.menuLanguageToggle.addEventListener("click", () => {
     setLanguage(currentLanguage === "pt-BR" ? "en" : "pt-BR");
   });
 
-  updateStaticTexts();
-  render();
+  async function initializePage() {
+    let games;
+
+    try {
+      games = supportsProjectStorage ? await loadProjectGames() : loadGames();
+    } catch (error) {
+      console.warn("Nao foi possivel carregar a colecao do projeto, usando fallback local.", error);
+      games = loadGames();
+    }
+
+    updateStaticTexts();
+    render(games);
+  }
+
+  initializePage().catch((error) => {
+    console.error(error);
+    updateStaticTexts();
+    render(loadGames());
+  });
 })();
