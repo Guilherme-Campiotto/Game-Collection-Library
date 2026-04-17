@@ -324,6 +324,23 @@
     return seedGames.map((game) => ({ ...game }));
   }
 
+  function mergeWithSeeds(collection) {
+    const normalizedCollection = Array.isArray(collection) ? collection.map(normalizeGame) : [];
+    const mergedById = new Map();
+
+    cloneSeeds().forEach((game) => {
+      mergedById.set(game.id, game);
+    });
+
+    normalizedCollection.forEach((game) => {
+      if (game && game.id) {
+        mergedById.set(game.id, game);
+      }
+    });
+
+    return [...mergedById.values()];
+  }
+
   function normalizeGame(game) {
     if (!game || typeof game !== "object") {
       return game;
@@ -347,7 +364,7 @@
       if (persisted) {
         const parsed = JSON.parse(persisted);
         if (Array.isArray(parsed)) {
-          return parsed.map(normalizeGame);
+          return mergeWithSeeds(parsed);
         }
       }
 
@@ -355,7 +372,7 @@
       if (legacy) {
         const parsedLegacy = JSON.parse(legacy);
         if (Array.isArray(parsedLegacy)) {
-          return [...cloneSeeds(), ...parsedLegacy.map(normalizeGame)];
+          return mergeWithSeeds(parsedLegacy);
         }
       }
     } catch (error) {
