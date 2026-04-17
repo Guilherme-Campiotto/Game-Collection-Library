@@ -16,8 +16,9 @@ test("index.html contains the main interactive sections", () => {
     "games-grid",
     "games-table-body",
     "game-form",
-    "language-toggle",
-    "hero-rare-link",
+    "menu-language-toggle",
+    "nav-home-link",
+    "nav-rare-link",
     "toast-container"
   ];
 

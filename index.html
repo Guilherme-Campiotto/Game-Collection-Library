@@ -7,14 +7,6 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <button class="floating-language-toggle" id="language-toggle" type="button" aria-label="Alternar idioma">
-    <span class="floating-language-icon" aria-hidden="true">A</span>
-    <span class="floating-language-track">
-      <span class="floating-language-thumb"></span>
-      <span class="floating-language-option">PT</span>
-      <span class="floating-language-option">EN</span>
-    </span>
-  </button>
   <div class="page-shell">
     <header class="hero">
       <div class="hero-copy">
@@ -24,6 +16,7 @@
         <nav class="site-nav" aria-label="Navegacao principal">
           <a class="site-nav-link active" href="index.html" id="nav-home-link">Biblioteca</a>
           <a class="site-nav-link" href="rare.html" id="nav-rare-link">Jogos mais raros</a>
+          <button class="site-nav-link site-nav-button" id="menu-language-toggle" type="button">PT / EN</button>
         </nav>
         <h1>Game Collection Library</h1>
         <p class="hero-text" id="hero-text">
@@ -32,7 +25,6 @@
         </p>
         <div class="hero-actions">
           <button class="primary" id="scroll-to-form" type="button">Cadastrar novo jogo</button>
-          <a class="secondary button-link" href="rare.html" id="hero-rare-link">Ver jogos raros</a>
           <button class="secondary" id="export-json" type="button">Exportar JSON</button>
         </div>
       </div>

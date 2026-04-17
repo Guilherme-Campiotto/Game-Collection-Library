@@ -8,7 +8,9 @@ const rareHtml = fs.readFileSync(path.join(repoRoot, "rare.html"), "utf8");
 
 test("rare.html contains the podium and rare games table sections", () => {
   const requiredIds = [
-    "rare-language-toggle",
+    "menu-language-toggle",
+    "rare-nav-home-link",
+    "rare-nav-link",
     "rare-podium",
     "rare-table-body"
   ];

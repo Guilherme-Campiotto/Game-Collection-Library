@@ -12,6 +12,7 @@
       eyebrow: "Raridades",
       navHome: "Biblioteca",
       navRare: "Jogos mais raros",
+      menuLanguage: "Idioma: PT / EN",
       title: "Jogos mais raros da colecao",
       text:
         "Um ranking dos itens com maior valor medio estimado, mostrando o top 3 no topo e uma tabela completa com o restante da colecao logo abaixo.",
@@ -36,6 +37,7 @@
       eyebrow: "Rarities",
       navHome: "Library",
       navRare: "Rarest games",
+      menuLanguage: "Language: PT / EN",
       title: "Rarest games in the collection",
       text:
         "A ranking of the items with the highest estimated average value, showing the top 3 above and a full table with the rest of the collection below.",
@@ -58,7 +60,7 @@
 
   const elements = {
     html: document.documentElement,
-    languageToggle: document.getElementById("rare-language-toggle"),
+    menuLanguageToggle: document.getElementById("menu-language-toggle"),
     eyebrow: document.getElementById("rare-eyebrow"),
     navHome: document.getElementById("rare-nav-home-link"),
     navRare: document.getElementById("rare-nav-link"),
@@ -234,6 +236,7 @@
     elements.eyebrow.textContent = t().eyebrow;
     elements.navHome.textContent = t().navHome;
     elements.navRare.textContent = t().navRare;
+    elements.menuLanguageToggle.textContent = t().menuLanguage;
     elements.title.textContent = t().title;
     elements.text.textContent = t().text;
     elements.topEyebrow.textContent = t().topEyebrow;
@@ -247,8 +250,7 @@
     elements.tableHeadGenre.textContent = t().tableGenre;
     elements.tableHeadYear.textContent = t().tableYear;
     elements.tableHeadPrice.textContent = t().tablePrice;
-    elements.languageToggle.classList.toggle("is-en", currentLanguage === "en");
-    elements.languageToggle.setAttribute(
+    elements.menuLanguageToggle.setAttribute(
       "aria-label",
       currentLanguage === "en" ? "Switch to Portuguese" : "Switch to English"
     );
@@ -267,7 +269,7 @@
     render();
   }
 
-  elements.languageToggle.addEventListener("click", () => {
+  elements.menuLanguageToggle.addEventListener("click", () => {
     setLanguage(currentLanguage === "pt-BR" ? "en" : "pt-BR");
   });
 
