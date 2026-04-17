@@ -75,6 +75,14 @@ textarea {
   justify-content: center;
 }
 
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
 .eyebrow {
   margin: 0 0 8px;
   color: var(--warm);
@@ -122,6 +130,25 @@ h2 {
 
 .hero-actions {
   margin-top: 24px;
+}
+
+.language-switch {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.language-switch span {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.language-switch select {
+  min-width: 132px;
+  padding: 10px 12px;
 }
 
 button,
@@ -437,6 +464,62 @@ textarea {
   display: none;
 }
 
+.toast-container {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 999;
+  display: grid;
+  gap: 10px;
+  pointer-events: none;
+}
+
+.toast {
+  min-width: min(320px, calc(100vw - 40px));
+  max-width: 420px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(62, 49, 29, 0.14);
+  background: rgba(255, 250, 242, 0.98);
+  color: var(--ink);
+  box-shadow: 0 16px 30px rgba(44, 31, 16, 0.18);
+  animation: toast-in 180ms ease-out forwards, toast-out 220ms ease-in 1.78s forwards;
+}
+
+.toast.success {
+  border-color: rgba(15, 109, 98, 0.22);
+  background: #eef9f6;
+}
+
+.toast.error {
+  border-color: rgba(123, 27, 27, 0.18);
+  background: #fbebeb;
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes toast-out {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
 @media (max-width: 1024px) {
   .hero,
   .controls-grid,
@@ -477,5 +560,11 @@ textarea {
 
   .game-meta {
     grid-template-columns: 1fr;
+  }
+
+  .toast-container {
+    right: 10px;
+    bottom: 10px;
+    left: 10px;
   }
 }

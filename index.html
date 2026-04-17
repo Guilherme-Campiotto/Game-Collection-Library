@@ -10,9 +10,18 @@
   <div class="page-shell">
     <header class="hero">
       <div class="hero-copy">
-        <p class="eyebrow">Colecao Pessoal</p>
+        <div class="topbar">
+          <p class="eyebrow" id="hero-eyebrow">Colecao Pessoal</p>
+          <label class="language-switch">
+            <span id="language-label">Idioma</span>
+            <select id="language-select" aria-label="Idioma do site">
+              <option value="pt-BR">Portuguese</option>
+              <option value="en">English</option>
+            </select>
+          </label>
+        </div>
         <h1>Game Collection Library</h1>
-        <p class="hero-text">
+        <p class="hero-text" id="hero-text">
           Um catalogo visual da sua biblioteca de jogos com cadastro rapido, filtros por plataforma
           e um painel para acompanhar preco medio de mercado, genero, ano e status da colecao.
         </p>
@@ -22,7 +31,7 @@
         </div>
       </div>
 
-      <section class="hero-gallery" aria-label="Fotos da colecao">
+      <section class="hero-gallery" id="hero-gallery" aria-label="Fotos da colecao">
         <img src="photo-1.jpeg" alt="Estante com jogos de PS4" class="hero-photo tall">
         <img src="photo-2.jpeg" alt="Estante com jogos de PS3" class="hero-photo">
         <img src="photo-4.jpeg" alt="Outra estante com jogos de PS4" class="hero-photo">
@@ -34,43 +43,43 @@
 
       <section class="panel controls-panel">
         <div class="section-heading">
-          <p class="eyebrow">Explorar</p>
-          <h2>Buscar, filtrar e ordenar</h2>
+          <p class="eyebrow" id="controls-eyebrow">Explorar</p>
+          <h2 id="controls-title">Buscar, filtrar e ordenar</h2>
         </div>
 
         <div class="controls-grid">
           <label>
-            <span>Busca</span>
+            <span id="search-label">Busca</span>
             <input id="search-input" type="search" placeholder="Nome, genero, observacoes...">
           </label>
 
           <label>
-            <span>Plataforma</span>
+            <span id="platform-label">Plataforma</span>
             <select id="platform-filter"></select>
           </label>
 
           <label>
-            <span>Genero</span>
+            <span id="genre-label">Genero</span>
             <select id="genre-filter"></select>
           </label>
 
           <label>
-            <span>Status</span>
+            <span id="status-label">Status</span>
             <select id="status-filter"></select>
           </label>
 
           <label>
-            <span>Ano minimo</span>
+            <span id="year-min-label">Ano minimo</span>
             <input id="year-min-filter" type="number" min="1980" max="2035" placeholder="Ex: 2010">
           </label>
 
           <label>
-            <span>Preco maximo (R$)</span>
+            <span id="price-max-label">Preco maximo (R$)</span>
             <input id="price-max-filter" type="number" min="0" step="1" placeholder="Ex: 120">
           </label>
 
           <label>
-            <span>Ordenar por</span>
+            <span id="sort-label">Ordenar por</span>
             <select id="sort-select">
               <option value="title-asc">Titulo (A-Z)</option>
               <option value="price-desc">Preco (maior)</option>
@@ -85,7 +94,7 @@
         <div class="controls-actions">
           <button class="secondary" id="clear-filters" type="button">Limpar filtros</button>
           <label class="import-label" for="import-json">
-            Importar JSON
+            <span id="import-label-text">Importar JSON</span>
             <input id="import-json" type="file" accept="application/json">
           </label>
         </div>
@@ -93,8 +102,8 @@
 
       <section class="panel collection-panel">
         <div class="section-heading">
-          <p class="eyebrow">Biblioteca</p>
-          <h2>Jogos cadastrados</h2>
+          <p class="eyebrow" id="library-eyebrow">Biblioteca</p>
+          <h2 id="library-title">Jogos cadastrados</h2>
         </div>
 
         <div class="results-meta">
@@ -108,14 +117,14 @@
           <table class="games-table">
             <thead>
               <tr>
-                <th>Jogo</th>
-                <th>Plataforma</th>
-                <th>Genero</th>
-                <th>Ano</th>
-                <th>Preco medio</th>
-                <th>Status</th>
-                <th>Foto</th>
-                <th>Acoes</th>
+                <th id="table-head-title">Jogo</th>
+                <th id="table-head-platform">Plataforma</th>
+                <th id="table-head-genre">Genero</th>
+                <th id="table-head-year">Ano</th>
+                <th id="table-head-price">Preco medio</th>
+                <th id="table-head-status">Status</th>
+                <th id="table-head-photo">Foto</th>
+                <th id="table-head-actions">Acoes</th>
               </tr>
             </thead>
             <tbody id="games-table-body"></tbody>
@@ -125,39 +134,39 @@
 
       <section class="panel form-panel" id="form-panel">
         <div class="section-heading">
-          <p class="eyebrow">Cadastro</p>
-          <h2>Adicionar ou editar item</h2>
+          <p class="eyebrow" id="form-eyebrow">Cadastro</p>
+          <h2 id="form-title">Adicionar ou editar item</h2>
           <p class="form-help" id="form-mode-label">Use o formulario para incluir um novo jogo ou atualizar um item existente.</p>
         </div>
 
         <form id="game-form" class="game-form">
           <label>
-            <span>Nome</span>
+            <span id="form-name-label">Nome</span>
             <input name="title" type="text" required>
           </label>
 
           <label>
-            <span>Plataforma</span>
+            <span id="form-platform-label">Plataforma</span>
             <input name="platform" type="text" placeholder="PS4, PS3, Switch..." required>
           </label>
 
           <label>
-            <span>Genero</span>
+            <span id="form-genre-label">Genero</span>
             <input name="genre" type="text" placeholder="Acao, RPG, Corrida..." required>
           </label>
 
           <label>
-            <span>Ano de lancamento</span>
+            <span id="form-year-label">Ano de lancamento</span>
             <input name="releaseYear" type="number" min="1980" max="2035" required>
           </label>
 
           <label>
-            <span>Preco medio (R$)</span>
+            <span id="form-price-label">Preco medio (R$)</span>
             <input name="averagePriceBrl" type="number" min="0" step="0.01" required>
           </label>
 
           <label>
-            <span>Status</span>
+            <span id="form-status-label">Status</span>
             <select name="status" required>
               <option value="Na fila">Na fila</option>
               <option value="Jogando">Jogando</option>
@@ -168,7 +177,7 @@
           </label>
 
           <label>
-            <span>Midia</span>
+            <span id="form-format-label">Midia</span>
             <select name="format" required>
               <option value="Fisica">Fisica</option>
               <option value="Digital">Digital</option>
@@ -177,22 +186,22 @@
           </label>
 
           <label>
-            <span>Condicao</span>
+            <span id="form-condition-label">Condicao</span>
             <input name="condition" type="text" placeholder="Completo, lacrado, usado...">
           </label>
 
           <label class="wide">
-            <span>Observacoes</span>
+            <span id="form-notes-label">Observacoes</span>
             <textarea name="notes" rows="3" placeholder="Edicao, steelbook, idioma, observacoes de compra..."></textarea>
           </label>
 
           <label class="wide">
-            <span>Foto da capa ou da midia</span>
+            <span id="form-photo-label">Foto da capa ou da midia</span>
             <input name="photo" type="file" accept="image/*">
           </label>
 
           <label class="wide">
-            <span>Ou cole a URL da capa</span>
+            <span id="form-image-url-label">Ou cole a URL da capa</span>
             <input name="imageUrl" type="url" placeholder="https://...">
           </label>
 
@@ -230,6 +239,8 @@
       </div>
     </article>
   </template>
+
+  <div id="toast-container" class="toast-container" aria-live="polite" aria-atomic="true"></div>
 
   <script src="data/seed-games.js"></script>
   <script src="app.js"></script>

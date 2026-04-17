@@ -2,9 +2,244 @@
   const STORAGE_KEY = "game-collection-library-state-v2";
   const LEGACY_KEY = "game-collection-library-custom-games";
   const VIEW_KEY = "game-collection-library-view-mode";
+  const LANGUAGE_KEY = "game-collection-library-language";
   const seedGames = Array.isArray(window.SEED_GAMES) ? window.SEED_GAMES : [];
 
+  const translations = {
+    "pt-BR": {
+      locale: "pt-BR",
+      htmlLang: "pt-BR",
+      heroEyebrow: "Colecao Pessoal",
+      languageLabel: "Idioma",
+      heroText:
+        "Um catalogo visual da sua biblioteca de jogos com cadastro rapido, filtros por plataforma e um painel para acompanhar preco medio de mercado, genero, ano e status da colecao.",
+      heroGalleryLabel: "Fotos da colecao",
+      heroGalleryAlt1: "Estante com jogos de PS4",
+      heroGalleryAlt2: "Estante com jogos de PS3",
+      heroGalleryAlt3: "Outra estante com jogos de PS4",
+      addNewGame: "Cadastrar novo jogo",
+      exportJson: "Exportar JSON",
+      collectionSummary: "Resumo da colecao",
+      statsItems: "Itens cadastrados",
+      statsValue: "Valor estimado",
+      statsPlatforms: "Plataformas",
+      statsNewest: "Jogo mais novo",
+      controlsEyebrow: "Explorar",
+      controlsTitle: "Buscar, filtrar e ordenar",
+      searchLabel: "Busca",
+      searchPlaceholder: "Nome, genero, observacoes...",
+      platformLabel: "Plataforma",
+      genreLabel: "Genero",
+      statusLabel: "Status",
+      yearMinLabel: "Ano minimo",
+      yearMinPlaceholder: "Ex: 2010",
+      priceMaxLabel: "Preco maximo (R$)",
+      priceMaxPlaceholder: "Ex: 120",
+      sortLabel: "Ordenar por",
+      clearFilters: "Limpar filtros",
+      importJson: "Importar JSON",
+      libraryEyebrow: "Biblioteca",
+      libraryTitle: "Jogos cadastrados",
+      switchToTable: "Trocar para tabela",
+      switchToCards: "Trocar para cards",
+      tableTitle: "Jogo",
+      tablePlatform: "Plataforma",
+      tableGenre: "Genero",
+      tableYear: "Ano",
+      tablePrice: "Preco medio",
+      tableStatus: "Status",
+      tablePhoto: "Foto",
+      tableActions: "Acoes",
+      formEyebrow: "Cadastro",
+      formTitle: "Adicionar ou editar item",
+      formModeDefault: "Use o formulario para incluir um novo jogo ou atualizar um item existente.",
+      formModeEditing: (title) => `Editando: ${title}. Altere os campos e salve para atualizar o jogo.`,
+      formNameLabel: "Nome",
+      formPlatformLabel: "Plataforma",
+      formPlatformPlaceholder: "PS4, PS3, Switch...",
+      formGenreLabel: "Genero",
+      formGenrePlaceholder: "Acao, RPG, Corrida...",
+      formYearLabel: "Ano de lancamento",
+      formPriceLabel: "Preco medio (R$)",
+      formStatusLabel: "Status",
+      formFormatLabel: "Midia",
+      formConditionLabel: "Condicao",
+      formConditionPlaceholder: "Completo, lacrado, usado...",
+      formNotesLabel: "Observacoes",
+      formNotesPlaceholder: "Edicao, steelbook, idioma, observacoes de compra...",
+      formPhotoLabel: "Foto da capa ou da midia",
+      formImageUrlLabel: "Ou cole a URL da capa",
+      currentImageDefault: "A imagem atual sera mantida se voce nao enviar outra.",
+      currentImageEditing: (image) => `Imagem atual: ${image}`,
+      saveGame: "Salvar jogo",
+      saveChanges: "Salvar alteracoes",
+      cancelEdit: "Cancelar edicao",
+      restoreCollection: "Restaurar colecao inicial",
+      allPlatforms: "Todas as plataformas",
+      allGenres: "Todos os generos",
+      allStatuses: "Todos os status",
+      sortTitleAsc: "Titulo (A-Z)",
+      sortPriceDesc: "Preco (maior)",
+      sortPriceAsc: "Preco (menor)",
+      sortYearDesc: "Lancamento (mais novo)",
+      sortYearAsc: "Lancamento (mais antigo)",
+      sortPlatformAsc: "Plataforma",
+      sourcePrice: (label) => `Ver referencia de preco em ${label || "fonte externa"}`,
+      sourceManual: "Manual",
+      noNotes: "Sem observacoes.",
+      noCondition: "Nao informada",
+      originManual: "Manual",
+      mediaLabel: "Midia",
+      conditionLabel: "Condicao",
+      originLabel: "Origem",
+      priceSourceLabel: "Fonte do preco",
+      edit: "Editar",
+      delete: "Excluir",
+      noResults: "Nenhum jogo encontrado com os filtros atuais.",
+      resultsCount: (count, total) => `${count} jogo(s) visiveis, somando ${total} em valor medio.`,
+      imageAlt: (title) => `Capa de ${title}`,
+      imageCurrent: (title) => `Capa de ${title}`,
+      gameAlertReset:
+        "Isso vai restaurar a colecao inicial e remover alteracoes salvas no navegador. Continuar?",
+      gameAlertDelete: (title) => `Excluir "${title}" da colecao?`,
+      importError: "O arquivo precisa conter um array de jogos.",
+      toastAddSuccess: (title) => `"${title}" cadastrado com sucesso.`,
+      toastEditSuccess: (title) => `"${title}" atualizado com sucesso.`,
+      toastDeleteSuccess: (title) => `"${title}" excluido com sucesso.`,
+      toastGenericError: "Algo deu errado. Tente novamente.",
+      toastReadError: "Nao foi possivel ler o arquivo selecionado.",
+      status: {
+        "Na fila": "Na fila",
+        Jogando: "Jogando",
+        Finalizado: "Finalizado",
+        Platinado: "Platinado",
+        Colecao: "Colecao"
+      },
+      format: {
+        Fisica: "Fisica",
+        Digital: "Digital",
+        Colecionador: "Colecionador"
+      }
+    },
+    en: {
+      locale: "en-US",
+      htmlLang: "en",
+      heroEyebrow: "Personal Collection",
+      languageLabel: "Language",
+      heroText:
+        "A visual catalog for your game library with quick registration, platform filters, and a dashboard to track average market price, genre, release year, and collection status.",
+      heroGalleryLabel: "Collection photos",
+      heroGalleryAlt1: "Shelf with PS4 games",
+      heroGalleryAlt2: "Shelf with PS3 games",
+      heroGalleryAlt3: "Another shelf with PS4 games",
+      addNewGame: "Add new game",
+      exportJson: "Export JSON",
+      collectionSummary: "Collection summary",
+      statsItems: "Registered items",
+      statsValue: "Estimated value",
+      statsPlatforms: "Platforms",
+      statsNewest: "Newest game",
+      controlsEyebrow: "Explore",
+      controlsTitle: "Search, filter, and sort",
+      searchLabel: "Search",
+      searchPlaceholder: "Title, genre, notes...",
+      platformLabel: "Platform",
+      genreLabel: "Genre",
+      statusLabel: "Status",
+      yearMinLabel: "Minimum year",
+      yearMinPlaceholder: "e.g. 2010",
+      priceMaxLabel: "Max price (R$)",
+      priceMaxPlaceholder: "e.g. 120",
+      sortLabel: "Sort by",
+      clearFilters: "Clear filters",
+      importJson: "Import JSON",
+      libraryEyebrow: "Library",
+      libraryTitle: "Registered games",
+      switchToTable: "Switch to table",
+      switchToCards: "Switch to cards",
+      tableTitle: "Game",
+      tablePlatform: "Platform",
+      tableGenre: "Genre",
+      tableYear: "Year",
+      tablePrice: "Average price",
+      tableStatus: "Status",
+      tablePhoto: "Photo",
+      tableActions: "Actions",
+      formEyebrow: "Form",
+      formTitle: "Add or edit item",
+      formModeDefault: "Use the form to add a new game or update an existing item.",
+      formModeEditing: (title) => `Editing: ${title}. Change the fields and save to update the game.`,
+      formNameLabel: "Title",
+      formPlatformLabel: "Platform",
+      formPlatformPlaceholder: "PS4, PS3, Switch...",
+      formGenreLabel: "Genre",
+      formGenrePlaceholder: "Action, RPG, Racing...",
+      formYearLabel: "Release year",
+      formPriceLabel: "Average price (R$)",
+      formStatusLabel: "Status",
+      formFormatLabel: "Format",
+      formConditionLabel: "Condition",
+      formConditionPlaceholder: "Complete, sealed, used...",
+      formNotesLabel: "Notes",
+      formNotesPlaceholder: "Edition, steelbook, language, purchase notes...",
+      formPhotoLabel: "Cover or media photo",
+      formImageUrlLabel: "Or paste the cover URL",
+      currentImageDefault: "The current image will be kept if you do not upload another one.",
+      currentImageEditing: (image) => `Current image: ${image}`,
+      saveGame: "Save game",
+      saveChanges: "Save changes",
+      cancelEdit: "Cancel editing",
+      restoreCollection: "Restore initial collection",
+      allPlatforms: "All platforms",
+      allGenres: "All genres",
+      allStatuses: "All statuses",
+      sortTitleAsc: "Title (A-Z)",
+      sortPriceDesc: "Price (highest)",
+      sortPriceAsc: "Price (lowest)",
+      sortYearDesc: "Release (newest)",
+      sortYearAsc: "Release (oldest)",
+      sortPlatformAsc: "Platform",
+      sourcePrice: (label) => `View price reference on ${label || "external source"}`,
+      sourceManual: "Manual",
+      noNotes: "No notes.",
+      noCondition: "Not informed",
+      originManual: "Manual",
+      mediaLabel: "Format",
+      conditionLabel: "Condition",
+      originLabel: "Origin",
+      priceSourceLabel: "Price source",
+      edit: "Edit",
+      delete: "Delete",
+      noResults: "No games found with the current filters.",
+      resultsCount: (count, total) => `${count} visible game(s), totaling ${total} in average market value.`,
+      imageAlt: (title) => `Cover for ${title}`,
+      imageCurrent: (title) => `Cover for ${title}`,
+      gameAlertReset:
+        "This will restore the initial collection and remove changes saved in the browser. Continue?",
+      gameAlertDelete: (title) => `Delete \"${title}\" from the collection?`,
+      importError: "The file must contain an array of games.",
+      toastAddSuccess: (title) => `"${title}" added successfully.`,
+      toastEditSuccess: (title) => `"${title}" updated successfully.`,
+      toastDeleteSuccess: (title) => `"${title}" deleted successfully.`,
+      toastGenericError: "Something went wrong. Please try again.",
+      toastReadError: "The selected file could not be read.",
+      status: {
+        "Na fila": "Backlog",
+        Jogando: "Playing",
+        Finalizado: "Finished",
+        Platinado: "Platinum",
+        Colecao: "Collection"
+      },
+      format: {
+        Fisica: "Physical",
+        Digital: "Digital",
+        Colecionador: "Collector's"
+      }
+    }
+  };
+
   const elements = {
+    html: document.documentElement,
     statsGrid: document.getElementById("stats-grid"),
     resultsCount: document.getElementById("results-count"),
     gamesGrid: document.getElementById("games-grid"),
@@ -29,12 +264,57 @@
     formModeLabel: document.getElementById("form-mode-label"),
     currentImageLabel: document.getElementById("current-image-label"),
     submitButton: document.getElementById("submit-button"),
-    cancelEdit: document.getElementById("cancel-edit")
+    cancelEdit: document.getElementById("cancel-edit"),
+    languageSelect: document.getElementById("language-select"),
+    toastContainer: document.getElementById("toast-container"),
+    heroEyebrow: document.getElementById("hero-eyebrow"),
+    languageLabel: document.getElementById("language-label"),
+    heroText: document.getElementById("hero-text"),
+    heroGallery: document.getElementById("hero-gallery"),
+    controlsEyebrow: document.getElementById("controls-eyebrow"),
+    controlsTitle: document.getElementById("controls-title"),
+    searchLabel: document.getElementById("search-label"),
+    platformLabel: document.getElementById("platform-label"),
+    genreLabel: document.getElementById("genre-label"),
+    statusLabel: document.getElementById("status-label"),
+    yearMinLabel: document.getElementById("year-min-label"),
+    priceMaxLabel: document.getElementById("price-max-label"),
+    sortLabel: document.getElementById("sort-label"),
+    importLabelText: document.getElementById("import-label-text"),
+    libraryEyebrow: document.getElementById("library-eyebrow"),
+    libraryTitle: document.getElementById("library-title"),
+    formEyebrow: document.getElementById("form-eyebrow"),
+    formTitle: document.getElementById("form-title"),
+    tableHeadTitle: document.getElementById("table-head-title"),
+    tableHeadPlatform: document.getElementById("table-head-platform"),
+    tableHeadGenre: document.getElementById("table-head-genre"),
+    tableHeadYear: document.getElementById("table-head-year"),
+    tableHeadPrice: document.getElementById("table-head-price"),
+    tableHeadStatus: document.getElementById("table-head-status"),
+    tableHeadPhoto: document.getElementById("table-head-photo"),
+    tableHeadActions: document.getElementById("table-head-actions"),
+    formNameLabel: document.getElementById("form-name-label"),
+    formPlatformLabel: document.getElementById("form-platform-label"),
+    formGenreLabel: document.getElementById("form-genre-label"),
+    formYearLabel: document.getElementById("form-year-label"),
+    formPriceLabel: document.getElementById("form-price-label"),
+    formStatusLabel: document.getElementById("form-status-label"),
+    formFormatLabel: document.getElementById("form-format-label"),
+    formConditionLabel: document.getElementById("form-condition-label"),
+    formNotesLabel: document.getElementById("form-notes-label"),
+    formPhotoLabel: document.getElementById("form-photo-label"),
+    formImageUrlLabel: document.getElementById("form-image-url-label")
   };
 
   let games = loadGames();
   let currentEditId = null;
   let viewMode = localStorage.getItem(VIEW_KEY) || "grid";
+  let currentLanguage = localStorage.getItem(LANGUAGE_KEY) || "pt-BR";
+  let activeToastTimeouts = [];
+
+  function t() {
+    return translations[currentLanguage] || translations["pt-BR"];
+  }
 
   function cloneSeeds() {
     return seedGames.map((game) => ({ ...game }));
@@ -68,6 +348,36 @@
     localStorage.setItem(STORAGE_KEY, JSON.stringify(games));
   }
 
+  function saveLanguage() {
+    localStorage.setItem(LANGUAGE_KEY, currentLanguage);
+  }
+
+  function clearToastTimers() {
+    activeToastTimeouts.forEach((timeoutId) => clearTimeout(timeoutId));
+    activeToastTimeouts = [];
+  }
+
+  function showToast(type, message) {
+    if (!elements.toastContainer) {
+      return;
+    }
+
+    clearToastTimers();
+    elements.toastContainer.innerHTML = "";
+
+    const toast = document.createElement("div");
+    toast.className = `toast ${type}`;
+    toast.setAttribute("role", type === "error" ? "alert" : "status");
+    toast.textContent = message;
+    elements.toastContainer.appendChild(toast);
+
+    const removeTimeout = setTimeout(() => {
+      toast.remove();
+    }, 2000);
+
+    activeToastTimeouts.push(removeTimeout);
+  }
+
   function slugify(value) {
     return value
       .toLowerCase()
@@ -78,7 +388,7 @@
   }
 
   function currency(value) {
-    return new Intl.NumberFormat("pt-BR", {
+    return new Intl.NumberFormat(t().locale, {
       style: "currency",
       currency: "BRL",
       maximumFractionDigits: 0
@@ -94,6 +404,18 @@
       .replaceAll("'", "&#39;");
   }
 
+  function translateStatus(value) {
+    return t().status[value] || value;
+  }
+
+  function translateFormat(value) {
+    return t().format[value] || value;
+  }
+
+  function translateSourceLabel(value) {
+    return value === "Manual" ? t().sourceManual : value;
+  }
+
   function getFilterValues() {
     return {
       search: elements.searchInput.value.trim().toLowerCase(),
@@ -106,13 +428,13 @@
     };
   }
 
-  function populateSelect(select, values, label) {
+  function populateSelect(select, values, allText) {
     const previous = select.value;
     select.innerHTML = "";
 
     const allOption = document.createElement("option");
     allOption.value = "";
-    allOption.textContent = `Todos os ${label}`;
+    allOption.textContent = allText;
     select.appendChild(allOption);
 
     values.forEach((value) => {
@@ -128,9 +450,109 @@
   }
 
   function refreshFilterOptions() {
-    populateSelect(elements.platformFilter, [...new Set(games.map((game) => game.platform))].sort(), "plataformas");
-    populateSelect(elements.genreFilter, [...new Set(games.map((game) => game.genre))].sort(), "generos");
-    populateSelect(elements.statusFilter, [...new Set(games.map((game) => game.status))].sort(), "status");
+    populateSelect(elements.platformFilter, [...new Set(games.map((game) => game.platform))].sort(), t().allPlatforms);
+    populateSelect(elements.genreFilter, [...new Set(games.map((game) => game.genre))].sort(), t().allGenres);
+
+    const previous = elements.statusFilter.value;
+    elements.statusFilter.innerHTML = "";
+    const allOption = document.createElement("option");
+    allOption.value = "";
+    allOption.textContent = t().allStatuses;
+    elements.statusFilter.appendChild(allOption);
+
+    [...new Set(games.map((game) => game.status))].sort().forEach((value) => {
+      const option = document.createElement("option");
+      option.value = value;
+      option.textContent = translateStatus(value);
+      elements.statusFilter.appendChild(option);
+    });
+
+    if ([...elements.statusFilter.options].some((option) => option.value === previous)) {
+      elements.statusFilter.value = previous;
+    }
+  }
+
+  function updateStaticTexts() {
+    elements.html.lang = t().htmlLang;
+    elements.languageSelect.value = currentLanguage;
+    elements.heroEyebrow.textContent = t().heroEyebrow;
+    elements.languageLabel.textContent = t().languageLabel;
+    elements.heroText.textContent = t().heroText;
+    elements.heroGallery.setAttribute("aria-label", t().heroGalleryLabel);
+
+    const heroImages = elements.heroGallery.querySelectorAll("img");
+    if (heroImages[0]) heroImages[0].alt = t().heroGalleryAlt1;
+    if (heroImages[1]) heroImages[1].alt = t().heroGalleryAlt2;
+    if (heroImages[2]) heroImages[2].alt = t().heroGalleryAlt3;
+
+    elements.scrollToForm.textContent = t().addNewGame;
+    elements.exportButton.textContent = t().exportJson;
+    elements.statsGrid.setAttribute("aria-label", t().collectionSummary);
+    elements.controlsEyebrow.textContent = t().controlsEyebrow;
+    elements.controlsTitle.textContent = t().controlsTitle;
+    elements.searchLabel.textContent = t().searchLabel;
+    elements.searchInput.placeholder = t().searchPlaceholder;
+    elements.platformLabel.textContent = t().platformLabel;
+    elements.genreLabel.textContent = t().genreLabel;
+    elements.statusLabel.textContent = t().statusLabel;
+    elements.yearMinLabel.textContent = t().yearMinLabel;
+    elements.yearMinFilter.placeholder = t().yearMinPlaceholder;
+    elements.priceMaxLabel.textContent = t().priceMaxLabel;
+    elements.priceMaxFilter.placeholder = t().priceMaxPlaceholder;
+    elements.sortLabel.textContent = t().sortLabel;
+    elements.clearFilters.textContent = t().clearFilters;
+    elements.importLabelText.textContent = t().importJson;
+    elements.libraryEyebrow.textContent = t().libraryEyebrow;
+    elements.libraryTitle.textContent = t().libraryTitle;
+    elements.formEyebrow.textContent = t().formEyebrow;
+    elements.formTitle.textContent = t().formTitle;
+
+    elements.tableHeadTitle.textContent = t().tableTitle;
+    elements.tableHeadPlatform.textContent = t().tablePlatform;
+    elements.tableHeadGenre.textContent = t().tableGenre;
+    elements.tableHeadYear.textContent = t().tableYear;
+    elements.tableHeadPrice.textContent = t().tablePrice;
+    elements.tableHeadStatus.textContent = t().tableStatus;
+    elements.tableHeadPhoto.textContent = t().tablePhoto;
+    elements.tableHeadActions.textContent = t().tableActions;
+
+    elements.formNameLabel.textContent = t().formNameLabel;
+    elements.formPlatformLabel.textContent = t().formPlatformLabel;
+    elements.gameForm.elements.platform.placeholder = t().formPlatformPlaceholder;
+    elements.formGenreLabel.textContent = t().formGenreLabel;
+    elements.gameForm.elements.genre.placeholder = t().formGenrePlaceholder;
+    elements.formYearLabel.textContent = t().formYearLabel;
+    elements.formPriceLabel.textContent = t().formPriceLabel;
+    elements.formStatusLabel.textContent = t().formStatusLabel;
+    elements.formFormatLabel.textContent = t().formFormatLabel;
+    elements.formConditionLabel.textContent = t().formConditionLabel;
+    elements.gameForm.elements.condition.placeholder = t().formConditionPlaceholder;
+    elements.formNotesLabel.textContent = t().formNotesLabel;
+    elements.gameForm.elements.notes.placeholder = t().formNotesPlaceholder;
+    elements.formPhotoLabel.textContent = t().formPhotoLabel;
+    elements.formImageUrlLabel.textContent = t().formImageUrlLabel;
+    elements.submitButton.textContent = currentEditId ? t().saveChanges : t().saveGame;
+    elements.cancelEdit.textContent = t().cancelEdit;
+    elements.resetStorage.textContent = t().restoreCollection;
+
+    [...elements.gameForm.elements.status.options].forEach((option) => {
+      option.textContent = translateStatus(option.value);
+    });
+    [...elements.gameForm.elements.format.options].forEach((option) => {
+      option.textContent = translateFormat(option.value);
+    });
+
+    elements.sortSelect.options[0].textContent = t().sortTitleAsc;
+    elements.sortSelect.options[1].textContent = t().sortPriceDesc;
+    elements.sortSelect.options[2].textContent = t().sortPriceAsc;
+    elements.sortSelect.options[3].textContent = t().sortYearDesc;
+    elements.sortSelect.options[4].textContent = t().sortYearAsc;
+    elements.sortSelect.options[5].textContent = t().sortPlatformAsc;
+
+    if (!currentEditId) {
+      elements.formModeLabel.textContent = t().formModeDefault;
+      elements.currentImageLabel.textContent = t().currentImageDefault;
+    }
   }
 
   function sortGames(collection, sort) {
@@ -159,14 +581,7 @@
     const { search, platform, genre, status, yearMin, priceMax, sort } = getFilterValues();
 
     const filtered = games.filter((game) => {
-      const haystack = [
-        game.title,
-        game.platform,
-        game.genre,
-        game.notes,
-        game.condition,
-        game.location
-      ]
+      const haystack = [game.title, game.platform, game.genre, game.notes, game.condition, game.location]
         .join(" ")
         .toLowerCase();
 
@@ -190,10 +605,10 @@
     const newest = collection.reduce((max, game) => Math.max(max, game.releaseYear), 0);
 
     const stats = [
-      { label: "Itens cadastrados", value: total },
-      { label: "Valor estimado", value: currency(totalValue) },
-      { label: "Plataformas", value: platforms },
-      { label: "Jogo mais novo", value: newest || "-" }
+      { label: t().statsItems, value: total },
+      { label: t().statsValue, value: currency(totalValue) },
+      { label: t().statsPlatforms, value: platforms },
+      { label: t().statsNewest, value: newest || "-" }
     ];
 
     elements.statsGrid.innerHTML = "";
@@ -223,14 +638,14 @@
     editButton.className = "secondary action-button";
     editButton.dataset.action = "edit";
     editButton.dataset.id = id;
-    editButton.textContent = "Editar";
+    editButton.textContent = t().edit;
 
     const deleteButton = document.createElement("button");
     deleteButton.type = "button";
     deleteButton.className = "danger action-button";
     deleteButton.dataset.action = "delete";
     deleteButton.dataset.id = id;
-    deleteButton.textContent = "Excluir";
+    deleteButton.textContent = t().delete;
 
     wrapper.append(editButton, deleteButton);
     return wrapper;
@@ -240,7 +655,7 @@
     elements.gamesGrid.innerHTML = "";
 
     if (!collection.length) {
-      elements.gamesGrid.innerHTML = "<p>Nenhum jogo encontrado com os filtros atuais.</p>";
+      elements.gamesGrid.innerHTML = `<p>${t().noResults}</p>`;
       return;
     }
 
@@ -259,7 +674,7 @@
 
       card.dataset.id = game.id;
       image.src = game.image;
-      image.alt = `Capa de ${game.title}`;
+      image.alt = t().imageAlt(game.title);
       title.textContent = game.title;
       platform.textContent = game.platform;
       price.textContent = currency(game.averagePriceBrl);
@@ -267,7 +682,7 @@
       [
         { text: game.genre, className: "tag" },
         { text: String(game.releaseYear), className: "tag" },
-        { text: game.status, className: "tag status" }
+        { text: translateStatus(game.status), className: "tag status" }
       ].forEach((item) => {
         const badge = document.createElement("span");
         badge.className = item.className;
@@ -276,16 +691,16 @@
       });
 
       meta.append(
-        createMetaItem("Midia", game.format),
-        createMetaItem("Condicao", game.condition || "Nao informada"),
-        createMetaItem("Origem", game.location || "Manual"),
-        createMetaItem("Fonte do preco", game.sourceLabel || "Manual")
+        createMetaItem(t().mediaLabel, translateFormat(game.format)),
+        createMetaItem(t().conditionLabel, game.condition || t().noCondition),
+        createMetaItem(t().originLabel, game.location || t().originManual),
+        createMetaItem(t().priceSourceLabel, translateSourceLabel(game.sourceLabel || "Manual"))
       );
 
-      notes.textContent = game.notes || "Sem observacoes.";
+      notes.textContent = game.notes || t().noNotes;
       if (game.sourceUrl) {
         source.href = game.sourceUrl;
-        source.textContent = `Ver referencia de preco em ${game.sourceLabel || "fonte externa"}`;
+        source.textContent = t().sourcePrice(translateSourceLabel(game.sourceLabel));
       } else {
         source.remove();
       }
@@ -306,8 +721,8 @@
         <td>${escapeHtml(game.genre)}</td>
         <td>${escapeHtml(game.releaseYear)}</td>
         <td>${escapeHtml(currency(game.averagePriceBrl))}</td>
-        <td>${escapeHtml(game.status)}</td>
-        <td><img class="mini-photo" src="${escapeHtml(game.image)}" alt="Capa de ${escapeHtml(game.title)}"></td>
+        <td>${escapeHtml(translateStatus(game.status))}</td>
+        <td><img class="mini-photo" src="${escapeHtml(game.image)}" alt="${escapeHtml(t().imageCurrent(game.title))}"></td>
         <td></td>
       `;
 
@@ -323,7 +738,7 @@
     renderTable(filtered);
 
     const totalValue = filtered.reduce((sum, game) => sum + Number(game.averagePriceBrl || 0), 0);
-    elements.resultsCount.textContent = `${filtered.length} jogo(s) visiveis, somando ${currency(totalValue)} em valor medio.`;
+    elements.resultsCount.textContent = t().resultsCount(filtered.length, currency(totalValue));
     updateView();
   }
 
@@ -331,7 +746,7 @@
     const isGrid = viewMode === "grid";
     elements.gamesGrid.classList.toggle("hidden", !isGrid);
     elements.tableWrap.classList.toggle("hidden", isGrid);
-    elements.toggleView.textContent = isGrid ? "Trocar para tabela" : "Trocar para cards";
+    elements.toggleView.textContent = isGrid ? t().switchToTable : t().switchToCards;
     localStorage.setItem(VIEW_KEY, viewMode);
   }
 
@@ -339,7 +754,7 @@
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = () => resolve(reader.result);
-      reader.onerror = () => reject(new Error("Falha ao ler o arquivo."));
+      reader.onerror = () => reject(new Error(t().toastReadError));
       reader.readAsDataURL(file);
     });
   }
@@ -348,13 +763,9 @@
     const editing = Boolean(game);
     currentEditId = editing ? game.id : null;
     elements.cancelEdit.classList.toggle("hidden", !editing);
-    elements.submitButton.textContent = editing ? "Salvar alteracoes" : "Salvar jogo";
-    elements.formModeLabel.textContent = editing
-      ? `Editando: ${game.title}. Altere os campos e salve para atualizar o jogo.`
-      : "Use o formulario para incluir um novo jogo ou atualizar um item existente.";
-    elements.currentImageLabel.textContent = editing
-      ? `Imagem atual: ${game.image}`
-      : "A imagem atual sera mantida se voce nao enviar outra.";
+    elements.submitButton.textContent = editing ? t().saveChanges : t().saveGame;
+    elements.formModeLabel.textContent = editing ? t().formModeEditing(game.title) : t().formModeDefault;
+    elements.currentImageLabel.textContent = editing ? t().currentImageEditing(game.image) : t().currentImageDefault;
   }
 
   function fillForm(game) {
@@ -385,50 +796,57 @@
   async function handleFormSubmit(event) {
     event.preventDefault();
 
-    const formData = new FormData(elements.gameForm);
-    const title = formData.get("title").trim();
-    const platform = formData.get("platform").trim();
-    const genre = formData.get("genre").trim();
-    const releaseYear = Number(formData.get("releaseYear"));
-    const averagePriceBrl = Number(formData.get("averagePriceBrl"));
-    const photoFile = formData.get("photo");
-    const imageUrl = formData.get("imageUrl").trim();
-    const existing = currentEditId ? findGame(currentEditId) : null;
+    try {
+      const formData = new FormData(elements.gameForm);
+      const title = formData.get("title").trim();
+      const platform = formData.get("platform").trim();
+      const genre = formData.get("genre").trim();
+      const releaseYear = Number(formData.get("releaseYear"));
+      const averagePriceBrl = Number(formData.get("averagePriceBrl"));
+      const photoFile = formData.get("photo");
+      const imageUrl = formData.get("imageUrl").trim();
+      const existing = currentEditId ? findGame(currentEditId) : null;
 
-    let image = existing?.image || "photo-1.jpeg";
-    if (photoFile && photoFile.size) {
-      image = await fileToDataUrl(photoFile);
-    } else if (imageUrl) {
-      image = imageUrl;
+      let image = existing?.image || "photo-1.jpeg";
+      if (photoFile && photoFile.size) {
+        image = await fileToDataUrl(photoFile);
+      } else if (imageUrl) {
+        image = imageUrl;
+      }
+
+      const payload = {
+        id: existing?.id || `${slugify(platform)}-${slugify(title)}-${Date.now()}`,
+        title,
+        platform,
+        genre,
+        releaseYear,
+        averagePriceBrl,
+        status: formData.get("status"),
+        format: formData.get("format"),
+        condition: formData.get("condition").trim() || "Nao informada",
+        location: existing?.location || "Cadastro manual",
+        image,
+        notes: formData.get("notes").trim(),
+        sourceUrl: existing?.sourceUrl || "",
+        sourceLabel: existing?.sourceLabel || "Manual"
+      };
+
+      if (existing) {
+        games = games.map((game) => (game.id === existing.id ? payload : game));
+      } else {
+        games.unshift(payload);
+      }
+
+      saveGames();
+      refreshFilterOptions();
+      clearForm();
+      updateStaticTexts();
+      render();
+      showToast("success", existing ? t().toastEditSuccess(title) : t().toastAddSuccess(title));
+    } catch (error) {
+      console.error(error);
+      showToast("error", error.message || t().toastGenericError);
     }
-
-    const payload = {
-      id: existing?.id || `${slugify(platform)}-${slugify(title)}-${Date.now()}`,
-      title,
-      platform,
-      genre,
-      releaseYear,
-      averagePriceBrl,
-      status: formData.get("status"),
-      format: formData.get("format"),
-      condition: formData.get("condition").trim() || "Nao informada",
-      location: existing?.location || "Cadastro manual",
-      image,
-      notes: formData.get("notes").trim() || "Sem observacoes.",
-      sourceUrl: existing?.sourceUrl || "",
-      sourceLabel: existing?.sourceLabel || "Manual"
-    };
-
-    if (existing) {
-      games = games.map((game) => (game.id === existing.id ? payload : game));
-    } else {
-      games.unshift(payload);
-    }
-
-    saveGames();
-    refreshFilterOptions();
-    clearForm();
-    render();
   }
 
   function exportCollection() {
@@ -442,23 +860,29 @@
   }
 
   async function importCollection(event) {
-    const file = event.target.files[0];
-    if (!file) {
-      return;
-    }
+    try {
+      const file = event.target.files[0];
+      if (!file) {
+        return;
+      }
 
-    const text = await file.text();
-    const imported = JSON.parse(text);
-    if (!Array.isArray(imported)) {
-      throw new Error("O arquivo precisa conter um array de jogos.");
-    }
+      const text = await file.text();
+      const imported = JSON.parse(text);
+      if (!Array.isArray(imported)) {
+        throw new Error(t().importError);
+      }
 
-    games = imported;
-    saveGames();
-    refreshFilterOptions();
-    clearForm();
-    render();
-    event.target.value = "";
+      games = imported;
+      saveGames();
+      refreshFilterOptions();
+      clearForm();
+      updateStaticTexts();
+      render();
+      event.target.value = "";
+    } catch (error) {
+      event.target.value = "";
+      throw error;
+    }
   }
 
   function clearFilters() {
@@ -473,7 +897,7 @@
   }
 
   function resetStorage() {
-    if (!confirm("Isso vai restaurar a colecao inicial e remover alteracoes salvas no navegador. Continuar?")) {
+    if (!confirm(t().gameAlertReset)) {
       return;
     }
 
@@ -482,16 +906,18 @@
     saveGames();
     refreshFilterOptions();
     clearForm();
+    updateStaticTexts();
     render();
   }
 
   function deleteGame(id) {
     const game = findGame(id);
     if (!game) {
+      showToast("error", t().toastGenericError);
       return;
     }
 
-    if (!confirm(`Excluir "${game.title}" da colecao?`)) {
+    if (!confirm(t().gameAlertDelete(game.title))) {
       return;
     }
 
@@ -501,7 +927,9 @@
     if (currentEditId === id) {
       clearForm();
     }
+    updateStaticTexts();
     render();
+    showToast("success", t().toastDeleteSuccess(game.title));
   }
 
   function handleActionClick(event) {
@@ -523,6 +951,14 @@
     }
   }
 
+  function setLanguage(language) {
+    currentLanguage = language in translations ? language : "pt-BR";
+    saveLanguage();
+    refreshFilterOptions();
+    updateStaticTexts();
+    render();
+  }
+
   function bindEvents() {
     [
       elements.searchInput,
@@ -537,7 +973,10 @@
     elements.gameForm.addEventListener("submit", handleFormSubmit);
     elements.exportButton.addEventListener("click", exportCollection);
     elements.importInput.addEventListener("change", (event) => {
-      importCollection(event).catch((error) => alert(error.message));
+      importCollection(event).catch((error) => {
+        console.error(error);
+        showToast("error", error.message || t().toastGenericError);
+      });
     });
     elements.clearFilters.addEventListener("click", clearFilters);
     elements.resetStorage.addEventListener("click", resetStorage);
@@ -551,10 +990,14 @@
     elements.cancelEdit.addEventListener("click", clearForm);
     elements.gamesGrid.addEventListener("click", handleActionClick);
     elements.tableBody.addEventListener("click", handleActionClick);
+    elements.languageSelect.addEventListener("change", (event) => {
+      setLanguage(event.target.value);
+    });
   }
 
   refreshFilterOptions();
   bindEvents();
   clearForm();
+  updateStaticTexts();
   render();
 })();
