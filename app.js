@@ -4,6 +4,8 @@
   const MAX_IMAGE_SIZE_BYTES = 2 * 1024 * 1024;
   const COLLECTION_API_URL = "/api/collection";
   const UPLOAD_API_URL = "/api/upload";
+  const AI_KEY_API_URL = "/api/ai-key";
+  const IDENTIFY_GAME_API_URL = "/api/identify-game";
   const seedGames = Array.isArray(window.SEED_GAMES) ? window.SEED_GAMES : [];
   const seedImageMap = Object.fromEntries(seedGames.map((game) => [game.id, game.image]));
   const supportsProjectStorage = window.location.protocol.startsWith("http");
@@ -23,6 +25,8 @@
       heroGalleryAlt2: "Estante com jogos de PS3",
       heroGalleryAlt3: "Outra estante com jogos de PS4",
       addNewGame: "Cadastrar novo jogo",
+      addByPhoto: "Cadastrar por foto",
+      configureAiKey: "Configurar IA",
       exportJson: "Exportar JSON",
       collectionSummary: "Resumo da coleção",
       statsItems: "Itens cadastrados",
@@ -114,6 +118,14 @@
       toastGenericError: "Algo deu errado. Tente novamente.",
       toastReadError: "Não foi possível ler o arquivo selecionado.",
       toastImageTooLarge: "A imagem excede o limite de 2 MB.",
+      toastAiKeySaved: "Chave da IA salva localmente.",
+      toastAiKeyRequired: "Configure a chave da IA antes de cadastrar por foto.",
+      toastIdentifyProgress: "Analisando a foto e buscando dados do jogo...",
+      toastIdentifySuccess: (title) => `"${title}" cadastrado pela foto.`,
+      toastIdentifyError: "Não foi possível cadastrar o jogo pela foto.",
+      identifyPhotoLoading: "Analisando foto...",
+      aiKeyPrompt:
+        "Cole sua API key da OpenAI. Ela será salva apenas neste projeto, em .local/openai-key.json, e não será enviada ao Git.",
       status: {
         "Na fila": "Na fila",
         Jogando: "Jogando",
@@ -139,6 +151,8 @@
       heroGalleryAlt2: "Shelf with PS3 games",
       heroGalleryAlt3: "Another shelf with PS4 games",
       addNewGame: "Add new game",
+      addByPhoto: "Add by photo",
+      configureAiKey: "Configure AI",
       exportJson: "Export JSON",
       collectionSummary: "Collection summary",
       statsItems: "Registered items",
@@ -230,6 +244,14 @@
       toastGenericError: "Something went wrong. Please try again.",
       toastReadError: "The selected file could not be read.",
       toastImageTooLarge: "The image exceeds the 2 MB limit.",
+      toastAiKeySaved: "AI key saved locally.",
+      toastAiKeyRequired: "Configure the AI key before adding by photo.",
+      toastIdentifyProgress: "Analyzing the photo and searching for game data...",
+      toastIdentifySuccess: (title) => `"${title}" added from the photo.`,
+      toastIdentifyError: "The game could not be added from the photo.",
+      identifyPhotoLoading: "Analyzing photo...",
+      aiKeyPrompt:
+        "Paste your OpenAI API key. It will be saved only in this project, under .local/openai-key.json, and will not be committed to Git.",
       status: {
         "Na fila": "Backlog",
         Jogando: "Playing",
@@ -265,6 +287,9 @@
     resetStorage: document.getElementById("reset-storage"),
     toggleView: document.getElementById("toggle-view"),
     scrollToForm: document.getElementById("scroll-to-form"),
+    identifyByPhoto: document.getElementById("identify-by-photo"),
+    identifyPhotoInput: document.getElementById("identify-photo-input"),
+    configureAiKey: document.getElementById("configure-ai-key"),
     heroRareLink: document.getElementById("hero-rare-link"),
     formPanel: document.getElementById("form-panel"),
     formModeLabel: document.getElementById("form-mode-label"),
@@ -318,6 +343,7 @@
   let viewMode = localStorage.getItem(VIEW_KEY) || "grid";
   let currentLanguage = localStorage.getItem(LANGUAGE_KEY) || "pt-BR";
   let activeToastTimeouts = [];
+  let isIdentifyingPhoto = false;
 
   function t() {
     return translations[currentLanguage] || translations["pt-BR"];
@@ -410,10 +436,12 @@
     activeToastTimeouts = [];
   }
 
-  function showToast(type, message) {
+  function showToast(type, message, options = {}) {
     if (!elements.toastContainer) {
       return;
     }
+
+    const duration = options.duration ?? 2000;
 
     clearToastTimers();
     elements.toastContainer.innerHTML = "";
@@ -424,11 +452,22 @@
     toast.textContent = message;
     elements.toastContainer.appendChild(toast);
 
+    if (duration === null) {
+      return;
+    }
+
     const removeTimeout = setTimeout(() => {
       toast.remove();
-    }, 2000);
+    }, duration);
 
     activeToastTimeouts.push(removeTimeout);
+  }
+
+  function setIdentifyPhotoLoading(isLoading) {
+    isIdentifyingPhoto = isLoading;
+    elements.identifyByPhoto.disabled = isLoading;
+    elements.identifyByPhoto.setAttribute("aria-busy", String(isLoading));
+    elements.identifyByPhoto.textContent = isLoading ? t().identifyPhotoLoading : t().addByPhoto;
   }
 
   function slugify(value) {
@@ -540,6 +579,8 @@
     if (heroImages[2]) heroImages[2].alt = t().heroGalleryAlt3;
 
     elements.scrollToForm.textContent = t().addNewGame;
+    elements.identifyByPhoto.textContent = isIdentifyingPhoto ? t().identifyPhotoLoading : t().addByPhoto;
+    elements.configureAiKey.textContent = t().configureAiKey;
     elements.exportButton.textContent = t().exportJson;
     elements.statsGrid.setAttribute("aria-label", t().collectionSummary);
     elements.controlsEyebrow.textContent = t().controlsEyebrow;
@@ -853,6 +894,72 @@
     return payload.imagePath;
   }
 
+  async function configureAiKey() {
+    if (!supportsProjectStorage) {
+      showToast("error", "Abra o site com npm start para configurar a IA.");
+      return;
+    }
+
+    const apiKey = prompt(t().aiKeyPrompt);
+    if (!apiKey) {
+      return;
+    }
+
+    const response = await fetch(AI_KEY_API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ apiKey })
+    });
+
+    if (!response.ok) {
+      throw new Error(t().toastGenericError);
+    }
+
+    showToast("success", t().toastAiKeySaved);
+  }
+
+  async function identifyGameByPhoto(file) {
+    if (!supportsProjectStorage) {
+      showToast("error", "Abra o site com npm start para cadastrar por foto.");
+      return;
+    }
+
+    setIdentifyPhotoLoading(true);
+    showToast("info", t().toastIdentifyProgress, { duration: null });
+
+    try {
+      const dataUrl = await fileToDataUrl(file);
+      const response = await fetch(IDENTIFY_GAME_API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ dataUrl })
+      });
+
+      const payload = await response.json();
+      if (!response.ok) {
+        throw new Error(payload.error || t().toastIdentifyError);
+      }
+
+      if (!payload.game) {
+        throw new Error(t().toastIdentifyError);
+      }
+
+      games.unshift(payload.game);
+      await persistGames();
+      refreshFilterOptions();
+      clearForm();
+      updateStaticTexts();
+      render();
+      showToast("success", t().toastIdentifySuccess(payload.game.title));
+    } finally {
+      setIdentifyPhotoLoading(false);
+    }
+  }
+
   function setFormMode(game) {
     const editing = Boolean(game);
     currentEditId = editing ? game.id : null;
@@ -1063,6 +1170,31 @@
     ].forEach((element) => element.addEventListener("input", render));
 
     elements.gameForm.addEventListener("submit", handleFormSubmit);
+    elements.identifyByPhoto.addEventListener("click", () => {
+      if (isIdentifyingPhoto) {
+        return;
+      }
+
+      elements.identifyPhotoInput.click();
+    });
+    elements.identifyPhotoInput.addEventListener("change", (event) => {
+      const file = event.target.files[0];
+      event.target.value = "";
+      if (!file) {
+        return;
+      }
+
+      identifyGameByPhoto(file).catch((error) => {
+        console.error(error);
+        showToast("error", error.message || t().toastIdentifyError);
+      });
+    });
+    elements.configureAiKey.addEventListener("click", () => {
+      configureAiKey().catch((error) => {
+        console.error(error);
+        showToast("error", error.message || t().toastGenericError);
+      });
+    });
     elements.exportButton.addEventListener("click", exportCollection);
     elements.importInput.addEventListener("change", (event) => {
       importCollection(event).catch((error) => {

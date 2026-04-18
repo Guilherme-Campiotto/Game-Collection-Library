@@ -9,3 +9,6 @@ venv/
 
 # Logs
 *.log
+
+# Configurações locais sensíveis
+.local/

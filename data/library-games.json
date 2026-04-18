@@ -1038,5 +1038,37 @@
     "notes": "Última lombada visível na fileira de Switch. Preço médio inicial estimado a partir das listagens físicas de Switch encontradas no Mercado Livre em 17 de abril de 2026.",
     "sourceUrl": "https://lista.mercadolivre.com.br/theatrhythm-final-bar-line-nintendo-switch",
     "sourceLabel": "Mercado Livre"
+  },
+  {
+    "id": "ps3-grand-theft-auto-iv-the-complete-edition-1776549384922",
+    "title": "Grand Theft Auto IV: The Complete Edition",
+    "platform": "PS3",
+    "genre": "Ação e Aventura",
+    "releaseYear": 2010,
+    "averagePriceBrl": 101,
+    "status": "Finalizado",
+    "format": "Fisica",
+    "condition": "Completo",
+    "location": "Cadastro por foto",
+    "image": "assets/covers/ps3-grand-theft-auto-iv-the-complete-edition-1776549384922.jpg",
+    "notes": "Grand Theft Auto IV & Episodes From Liberty City The Complete Edition, que reúne GTA IV e as Episodes From Liberty City; edição completa lançada em 2010. Preço médio atual no Brasil estimado em ~R$101, com referência principal em Magazine Luiza (R$110).",
+    "sourceUrl": "https://www.magazineluiza.com.br/grand-theft-auto-iv-complete-edition-para-ps3-rockstar/p/kk617gk0d8/ga/jgta/",
+    "sourceLabel": "Magazine Luiza"
+  },
+  {
+    "id": "ps4-resident-evil-4-1776548701524",
+    "title": "Resident Evil 4",
+    "platform": "PS4",
+    "genre": "Ação e horror de sobrevivência",
+    "releaseYear": 2016,
+    "averagePriceBrl": 115,
+    "status": "Na fila",
+    "format": "Fisica",
+    "condition": "Usado (não verificado)",
+    "location": "Cadastro por foto",
+    "image": "assets/covers/ps4-resident-evil-4-1776548701524.jpg",
+    "notes": "A capa mostra a edição de PS4 do Resident Evil 4 (remaster/port de 2016), identificável pelo logo clássico e arte com Leon. Para preço no Brasil, encontrei usados entre R$ 99,90 (Btech) e R$ 129,99 (FireWall Store); estimei média conservadora de ~R$ 115. Não foi possível confirmar anúncios do Mercado Livre neste momento.",
+    "sourceUrl": "https://firewallstore.net/products/resident-evil-4-remastered-ps4-usado",
+    "sourceLabel": "FireWall Store"
   }
 ]

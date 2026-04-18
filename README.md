@@ -16,7 +16,8 @@ Tela inicial com painel, resumo da coleção e filtros:
 
 - Mostra um painel com jogos da coleção, usando as fotos da estante como base inicial.
 - Permite buscar, filtrar e ordenar por plataforma, gênero, status, ano e preço médio.
-- Traz um formulario para cadastrar novos itens direto no navegador.
+- Traz um formulário para cadastrar novos itens direto no navegador.
+- Permite cadastrar um jogo a partir de uma foto usando IA com busca web.
 - Quando aberto com o servidor local em `npm start`, salva a coleção em `data/library-games.json` e as novas capas em `assets/covers/`.
 - Permite exportar e importar os dados em JSON.
 
@@ -33,11 +34,19 @@ Tela inicial com painel, resumo da coleção e filtros:
 
 1. Na pasta do projeto, rode `npm start`.
 2. Abra `http://127.0.0.1:3000` no navegador.
-3. Use o formulario para adicionar ou editar jogos.
-4. Quando enviar uma capa nova, o arquivo sera salvo em `assets/covers/`.
+3. Use o formulário para adicionar ou editar jogos.
+4. Quando enviar uma capa nova, o arquivo será salvo em `assets/covers/`.
 5. As alterações da coleção ficam persistidas em `data/library-games.json`.
+
+## Cadastro por foto com IA
+
+1. Clique em `Configurar IA`.
+2. Cole sua API key da OpenAI.
+3. A chave será salva apenas localmente em `.local/openai-key.json`, que é ignorado pelo Git.
+4. Clique em `Cadastrar por foto` e selecione uma imagem do jogo.
+5. O servidor usa a foto e busca web para sugerir título, plataforma, gênero, ano e preço médio.
 
 ## Observações sobre os preços
 
 - Os preços médios iniciais foram estimados com base em pesquisas no Mercado Livre em abril de 2026.
-- Como o mercado muda, voce pode editar a base exportando o JSON, ajustando os valores e importando novamente.
+- Como o mercado muda, você pode editar a base exportando o JSON, ajustando os valores e importando novamente.

@@ -6,6 +6,11 @@ const {
   saveCollection,
   saveUploadedCover
 } = require("./server/storage");
+const {
+  hasOpenAiKey,
+  saveOpenAiKey,
+  identifyGameFromPhoto
+} = require("./server/ai");
 
 const PORT = Number(process.env.PORT) || 3000;
 const HOST = "127.0.0.1";
@@ -103,6 +108,27 @@ const server = http.createServer(async (request, response) => {
       const payload = JSON.parse(body || "{}");
       const imagePath = saveUploadedCover(REPO_ROOT, payload);
       sendJson(response, 200, { imagePath });
+      return;
+    }
+
+    if (request.method === "GET" && url.pathname === "/api/ai-key/status") {
+      sendJson(response, 200, { configured: hasOpenAiKey(REPO_ROOT) });
+      return;
+    }
+
+    if (request.method === "POST" && url.pathname === "/api/ai-key") {
+      const body = await readBody(request);
+      const payload = JSON.parse(body || "{}");
+      saveOpenAiKey(REPO_ROOT, payload.apiKey);
+      sendJson(response, 200, { configured: true });
+      return;
+    }
+
+    if (request.method === "POST" && url.pathname === "/api/identify-game") {
+      const body = await readBody(request);
+      const payload = JSON.parse(body || "{}");
+      const game = await identifyGameFromPhoto(REPO_ROOT, payload);
+      sendJson(response, 200, { game });
       return;
     }
 
