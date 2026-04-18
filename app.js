@@ -118,8 +118,6 @@
         "Na fila": "Na fila",
         Jogando: "Jogando",
         Finalizado: "Finalizado",
-        Platinado: "Platinado",
-        Colecao: "Colecao"
       },
       format: {
         Fisica: "Fisica",
@@ -235,9 +233,7 @@
       status: {
         "Na fila": "Backlog",
         Jogando: "Playing",
-        Finalizado: "Finished",
-        Platinado: "Platinum",
-        Colecao: "Collection"
+        Finalizado: "Finished"
       },
       format: {
         Fisica: "Physical",
