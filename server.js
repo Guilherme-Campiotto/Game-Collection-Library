@@ -119,5 +119,5 @@ const server = http.createServer(async (request, response) => {
 });
 
 server.listen(PORT, HOST, () => {
-  console.log(`Game Collection Library running at http://${HOST}:${PORT}`);
+  console.log(`Game Collection running at http://${HOST}:${PORT}`);
 });

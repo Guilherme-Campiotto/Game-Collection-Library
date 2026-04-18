@@ -1,4 +1,4 @@
-# Game Collection Library
+# Game Collection
 
 Catalogo pessoal para organizar a colecao de jogos em uma interface simples, bonita e sem banco de dados.
 
