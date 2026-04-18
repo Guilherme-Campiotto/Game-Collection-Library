@@ -12,19 +12,19 @@
     "pt-BR": {
       locale: "pt-BR",
       htmlLang: "pt-BR",
-      heroEyebrow: "Colecao Pessoal",
+      heroEyebrow: "Coleção Pessoal",
       navHome: "Biblioteca",
       navRare: "Jogos mais raros",
       menuLanguage: "Idioma: PT / EN",
       heroText:
-        "Um catalogo visual da sua biblioteca de jogos com cadastro rapido, filtros por plataforma e um painel para acompanhar preco medio de mercado, genero, ano e status da colecao.",
-      heroGalleryLabel: "Fotos da colecao",
+        "Um catálogo visual da sua biblioteca de jogos com cadastro rápido, filtros por plataforma e um painel para acompanhar preço médio de mercado, gênero, ano e status da coleção.",
+      heroGalleryLabel: "Fotos da coleção",
       heroGalleryAlt1: "Estante com jogos de PS4",
       heroGalleryAlt2: "Estante com jogos de PS3",
       heroGalleryAlt3: "Outra estante com jogos de PS4",
       addNewGame: "Cadastrar novo jogo",
       exportJson: "Exportar JSON",
-      collectionSummary: "Resumo da colecao",
+      collectionSummary: "Resumo da coleção",
       statsItems: "Itens cadastrados",
       statsValue: "Valor estimado",
       statsPlatforms: "Plataformas",
@@ -32,13 +32,13 @@
       controlsEyebrow: "Explorar",
       controlsTitle: "Buscar, filtrar e ordenar",
       searchLabel: "Busca",
-      searchPlaceholder: "Nome, genero, observacoes...",
+      searchPlaceholder: "Nome, gênero, observações...",
       platformLabel: "Plataforma",
-      genreLabel: "Genero",
+      genreLabel: "Gênero",
       statusLabel: "Status",
-      yearMinLabel: "Ano minimo",
+      yearMinLabel: "Ano mínimo",
       yearMinPlaceholder: "Ex: 2010",
-      priceMaxLabel: "Preco maximo (R$)",
+      priceMaxLabel: "Preço máximo (R$)",
       priceMaxPlaceholder: "Ex: 120",
       sortLabel: "Ordenar por",
       clearFilters: "Limpar filtros",
@@ -49,70 +49,70 @@
       switchToCards: "Trocar para cards",
       tableTitle: "Jogo",
       tablePlatform: "Plataforma",
-      tableGenre: "Genero",
+      tableGenre: "Gênero",
       tableYear: "Ano",
-      tablePrice: "Preco medio",
+      tablePrice: "Preço médio",
       tableStatus: "Status",
       tablePhoto: "Foto",
-      tableActions: "Acoes",
+      tableActions: "Ações",
       formEyebrow: "Cadastro",
       formTitle: "Adicionar ou editar item",
-      formModeDefault: "Use o formulario para incluir um novo jogo ou atualizar um item existente.",
+      formModeDefault: "Use o formulário para incluir um novo jogo ou atualizar um item existente.",
       formModeEditing: (title) => `Editando: ${title}. Altere os campos e salve para atualizar o jogo.`,
       formNameLabel: "Nome",
       formPlatformLabel: "Plataforma",
       formPlatformPlaceholder: "PS4, PS3, Switch...",
-      formGenreLabel: "Genero",
-      formGenrePlaceholder: "Acao, RPG, Corrida...",
-      formYearLabel: "Ano de lancamento",
-      formPriceLabel: "Preco medio (R$)",
+      formGenreLabel: "Gênero",
+      formGenrePlaceholder: "Ação, RPG, Corrida...",
+      formYearLabel: "Ano de lançamento",
+      formPriceLabel: "Preço médio (R$)",
       formStatusLabel: "Status",
-      formFormatLabel: "Midia",
-      formConditionLabel: "Condicao",
+      formFormatLabel: "Mídia",
+      formConditionLabel: "Condição",
       formConditionPlaceholder: "Completo, lacrado, usado...",
-      formNotesLabel: "Observacoes",
-      formNotesPlaceholder: "Edicao, steelbook, idioma, observacoes de compra...",
-      formPhotoLabel: "Foto da capa ou da midia",
-      formPhotoHelp: "Envie uma imagem JPG, PNG ou WebP com tamanho maximo de 2 MB.",
-      currentImageDefault: "A imagem atual sera mantida se voce nao enviar outra.",
+      formNotesLabel: "Observações",
+      formNotesPlaceholder: "Edição, steelbook, idioma, observações de compra...",
+      formPhotoLabel: "Foto da capa ou da mídia",
+      formPhotoHelp: "Envie uma imagem JPG, PNG ou WebP com tamanho máximo de 2 MB.",
+      currentImageDefault: "A imagem atual será mantida se você não enviar outra.",
       currentImageEditing: (image) => `Imagem atual: ${image}`,
       saveGame: "Salvar jogo",
-      saveChanges: "Salvar alteracoes",
-      cancelEdit: "Cancelar edicao",
-      restoreCollection: "Restaurar colecao inicial",
+      saveChanges: "Salvar alterações",
+      cancelEdit: "Cancelar edição",
+      restoreCollection: "Restaurar coleção inicial",
       allPlatforms: "Todas as plataformas",
-      allGenres: "Todos os generos",
+      allGenres: "Todos os gêneros",
       allStatuses: "Todos os status",
-      sortTitleAsc: "Titulo (A-Z)",
-      sortPriceDesc: "Preco (maior)",
-      sortPriceAsc: "Preco (menor)",
-      sortYearDesc: "Lancamento (mais novo)",
-      sortYearAsc: "Lancamento (mais antigo)",
+      sortTitleAsc: "Título (A-Z)",
+      sortPriceDesc: "Preço (maior)",
+      sortPriceAsc: "Preço (menor)",
+      sortYearDesc: "Lançamento (mais novo)",
+      sortYearAsc: "Lançamento (mais antigo)",
       sortPlatformAsc: "Plataforma",
-      sourcePrice: (label) => `Ver referencia de preco em ${label || "fonte externa"}`,
+      sourcePrice: (label) => `Ver referência de preço em ${label || "fonte externa"}`,
       sourceManual: "Manual",
-      noNotes: "Sem observacoes.",
-      noCondition: "Nao informada",
+      noNotes: "Sem observações.",
+      noCondition: "Não informada",
       originManual: "Manual",
-      mediaLabel: "Midia",
-      conditionLabel: "Condicao",
+      mediaLabel: "Mídia",
+      conditionLabel: "Condição",
       originLabel: "Origem",
-      priceSourceLabel: "Fonte do preco",
+      priceSourceLabel: "Fonte do preço",
       edit: "Editar",
       delete: "Excluir",
       noResults: "Nenhum jogo encontrado com os filtros atuais.",
-      resultsCount: (count, total) => `${count} jogo(s) visiveis, somando ${total} em valor medio.`,
+      resultsCount: (count, total) => `${count} jogo(s) visíveis, somando ${total} em valor médio.`,
       imageAlt: (title) => `Capa de ${title}`,
       imageCurrent: (title) => `Capa de ${title}`,
       gameAlertReset:
-        "Isso vai restaurar a colecao inicial e remover alteracoes salvas no navegador. Continuar?",
-      gameAlertDelete: (title) => `Excluir "${title}" da colecao?`,
+        "Isso vai restaurar a coleção inicial e remover alterações salvas no navegador. Continuar?",
+      gameAlertDelete: (title) => `Excluir "${title}" da coleção?`,
       importError: "O arquivo precisa conter um array de jogos.",
       toastAddSuccess: (title) => `"${title}" cadastrado com sucesso.`,
       toastEditSuccess: (title) => `"${title}" atualizado com sucesso.`,
       toastDeleteSuccess: (title) => `"${title}" excluido com sucesso.`,
       toastGenericError: "Algo deu errado. Tente novamente.",
-      toastReadError: "Nao foi possivel ler o arquivo selecionado.",
+      toastReadError: "Não foi possível ler o arquivo selecionado.",
       toastImageTooLarge: "A imagem excede o limite de 2 MB.",
       status: {
         "Na fila": "Na fila",
@@ -120,7 +120,7 @@
         Finalizado: "Finalizado",
       },
       format: {
-        Fisica: "Fisica",
+        Fisica: "Física",
         Digital: "Digital",
         Colecionador: "Colecionador"
       }
@@ -364,13 +364,13 @@
   async function loadProjectGames() {
     const response = await fetch(COLLECTION_API_URL, { cache: "no-store" });
     if (!response.ok) {
-      throw new Error("Nao foi possivel carregar a colecao do projeto.");
+      throw new Error("Não foi possível carregar a coleção do projeto.");
     }
 
     const payload = await response.json();
     const collection = Array.isArray(payload) ? payload : payload.games;
     if (!Array.isArray(collection)) {
-      throw new Error("A resposta da colecao do projeto e invalida.");
+      throw new Error("A resposta da coleção do projeto é inválida.");
     }
 
     return mergeWithSeeds(collection);
@@ -378,7 +378,7 @@
 
   async function persistGames() {
     if (!supportsProjectStorage) {
-      throw new Error("Abra o site com npm start para salvar a colecao no projeto.");
+      throw new Error("Abra o site com npm start para salvar a coleção no projeto.");
     }
 
     const response = await fetch(COLLECTION_API_URL, {
@@ -390,13 +390,13 @@
     });
 
     if (!response.ok) {
-      throw new Error("Nao foi possivel salvar a colecao no projeto.");
+      throw new Error("Não foi possível salvar a coleção no projeto.");
     }
 
     const payload = await response.json();
     const collection = Array.isArray(payload) ? payload : payload.games;
     if (!Array.isArray(collection)) {
-      throw new Error("A resposta do salvamento da colecao e invalida.");
+      throw new Error("A resposta do salvamento da coleção é inválida.");
     }
     games = mergeWithSeeds(collection);
   }
@@ -913,7 +913,7 @@
         averagePriceBrl,
         status: formData.get("status"),
         format: formData.get("format"),
-        condition: formData.get("condition").trim() || "Nao informada",
+        condition: formData.get("condition").trim() || "Não informada",
         location: existing?.location || "Cadastro manual",
         image,
         notes: formData.get("notes").trim(),
@@ -1096,7 +1096,7 @@
     try {
       games = supportsProjectStorage ? await loadProjectGames() : cloneSeeds();
     } catch (error) {
-      console.warn("Nao foi possivel carregar a colecao do projeto.", error);
+      console.warn("Não foi possível carregar a coleção do projeto.", error);
       games = cloneSeeds();
     }
 

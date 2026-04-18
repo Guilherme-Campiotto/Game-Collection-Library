@@ -13,22 +13,22 @@
       navHome: "Biblioteca",
       navRare: "Jogos mais raros",
       menuLanguage: "Idioma: PT / EN",
-      title: "Jogos mais raros da colecao",
+      title: "Jogos mais raros da coleção",
       text:
-        "Um ranking dos itens com maior valor medio estimado, mostrando o top 3 no topo e uma tabela completa com o restante da colecao logo abaixo.",
+        "Um ranking dos itens com maior valor médio estimado, mostrando o top 3 no topo e uma tabela completa com o restante da coleção logo abaixo.",
       topEyebrow: "Top 3",
       topTitle: "Os tres jogos mais raros",
       topLabel: (rank) => `${rank} lugar`,
       topFallback: "Ainda nao ha jogos suficientes para montar o top 3.",
       tableEyebrow: "Lista completa",
-      tableTitle: "Outros jogos ordenados por preco",
-      tableHelp: "A tabela mostra o restante da colecao do mais caro para o mais acessivel.",
+      tableTitle: "Outros jogos ordenados por preço",
+      tableHelp: "A tabela mostra o restante da coleção do mais caro para o mais acessível.",
       tableRank: "Posicao",
       tableGame: "Jogo",
       tablePlatform: "Plataforma",
-      tableGenre: "Genero",
+      tableGenre: "Gênero",
       tableYear: "Ano",
-      tablePrice: "Preco medio",
+      tablePrice: "Preço médio",
       noGames: "Nenhum outro jogo para listar abaixo do top 3."
     },
     en: {
@@ -128,13 +128,13 @@
   async function loadProjectGames() {
     const response = await fetch(COLLECTION_API_URL, { cache: "no-store" });
     if (!response.ok) {
-      throw new Error("Nao foi possivel carregar a colecao do projeto.");
+      throw new Error("Não foi possível carregar a coleção do projeto.");
     }
 
     const payload = await response.json();
     const collection = Array.isArray(payload) ? payload : payload.games;
     if (!Array.isArray(collection)) {
-      throw new Error("A resposta da colecao do projeto e invalida.");
+      throw new Error("A resposta da coleção do projeto é inválida.");
     }
 
     return mergeWithSeeds(collection);
@@ -270,7 +270,7 @@
     try {
       games = supportsProjectStorage ? await loadProjectGames() : cloneSeeds();
     } catch (error) {
-      console.warn("Nao foi possivel carregar a colecao do projeto.", error);
+      console.warn("Não foi possível carregar a coleção do projeto.", error);
       games = cloneSeeds();
     }
 

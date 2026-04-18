@@ -11,17 +11,17 @@
     <header class="hero">
       <div class="hero-copy">
         <div class="topbar">
-          <p class="eyebrow" id="hero-eyebrow">Colecao Pessoal</p>
+          <p class="eyebrow" id="hero-eyebrow">Coleção Pessoal</p>
         </div>
-        <nav class="site-nav" aria-label="Navegacao principal">
+        <nav class="site-nav" aria-label="Navegação principal">
           <a class="site-nav-link active" href="index.html" id="nav-home-link">Biblioteca</a>
           <a class="site-nav-link" href="rare.html" id="nav-rare-link">Jogos mais raros</a>
           <button class="site-nav-link site-nav-button" id="menu-language-toggle" type="button">PT / EN</button>
         </nav>
-        <h1>Game Collectio</h1>
+        <h1>Game Collection</h1>
         <p class="hero-text" id="hero-text">
-          Um catalogo visual da sua biblioteca de jogos com cadastro rapido, filtros por plataforma
-          e um painel para acompanhar preco medio de mercado, genero, ano e status da colecao.
+          Um catálogo visual da sua biblioteca de jogos com cadastro rápido, filtros por plataforma
+          e um painel para acompanhar preço médio de mercado, gênero, ano e status da coleção.
         </p>
         <div class="hero-actions">
           <button class="primary" id="scroll-to-form" type="button">Cadastrar novo jogo</button>
@@ -29,7 +29,7 @@
         </div>
       </div>
 
-      <section class="hero-gallery" id="hero-gallery" aria-label="Fotos da colecao">
+      <section class="hero-gallery" id="hero-gallery" aria-label="Fotos da coleção">
         <img src="photo-1.jpeg" alt="Estante com jogos de PS4" class="hero-photo tall">
         <img src="photo-2.jpeg" alt="Estante com jogos de PS3" class="hero-photo">
         <img src="photo-4.jpeg" alt="Outra estante com jogos de PS4" class="hero-photo">
@@ -37,7 +37,7 @@
     </header>
 
     <main>
-      <section class="stats-grid" id="stats-grid" aria-label="Resumo da colecao"></section>
+      <section class="stats-grid" id="stats-grid" aria-label="Resumo da coleção"></section>
 
       <section class="panel controls-panel">
         <div class="section-heading">
@@ -48,7 +48,7 @@
         <div class="controls-grid">
           <label>
             <span id="search-label">Busca</span>
-            <input id="search-input" type="search" placeholder="Nome, genero, observacoes...">
+            <input id="search-input" type="search" placeholder="Nome, gênero, observações...">
           </label>
 
           <label>
@@ -57,7 +57,7 @@
           </label>
 
           <label>
-            <span id="genre-label">Genero</span>
+            <span id="genre-label">Gênero</span>
             <select id="genre-filter"></select>
           </label>
 
@@ -67,23 +67,23 @@
           </label>
 
           <label>
-            <span id="year-min-label">Ano minimo</span>
+            <span id="year-min-label">Ano mínimo</span>
             <input id="year-min-filter" type="number" min="1980" max="2035" placeholder="Ex: 2010">
           </label>
 
           <label>
-            <span id="price-max-label">Preco maximo (R$)</span>
+            <span id="price-max-label">Preço máximo (R$)</span>
             <input id="price-max-filter" type="number" min="0" step="1" placeholder="Ex: 120">
           </label>
 
           <label>
             <span id="sort-label">Ordenar por</span>
             <select id="sort-select">
-              <option value="title-asc">Titulo (A-Z)</option>
-              <option value="price-desc">Preco (maior)</option>
-              <option value="price-asc">Preco (menor)</option>
-              <option value="year-desc">Lancamento (mais novo)</option>
-              <option value="year-asc">Lancamento (mais antigo)</option>
+              <option value="title-asc">Título (A-Z)</option>
+              <option value="price-desc">Preço (maior)</option>
+              <option value="price-asc">Preço (menor)</option>
+              <option value="year-desc">Lançamento (mais novo)</option>
+              <option value="year-asc">Lançamento (mais antigo)</option>
               <option value="platform-asc">Plataforma</option>
             </select>
           </label>
@@ -117,12 +117,12 @@
               <tr>
                 <th id="table-head-title">Jogo</th>
                 <th id="table-head-platform">Plataforma</th>
-                <th id="table-head-genre">Genero</th>
+                <th id="table-head-genre">Gênero</th>
                 <th id="table-head-year">Ano</th>
-                <th id="table-head-price">Preco medio</th>
+                <th id="table-head-price">Preço médio</th>
                 <th id="table-head-status">Status</th>
                 <th id="table-head-photo">Foto</th>
-                <th id="table-head-actions">Acoes</th>
+                <th id="table-head-actions">Ações</th>
               </tr>
             </thead>
             <tbody id="games-table-body"></tbody>
@@ -134,7 +134,7 @@
         <div class="section-heading">
           <p class="eyebrow" id="form-eyebrow">Cadastro</p>
           <h2 id="form-title">Adicionar ou editar item</h2>
-          <p class="form-help" id="form-mode-label">Use o formulario para incluir um novo jogo ou atualizar um item existente.</p>
+          <p class="form-help" id="form-mode-label">Use o formulário para incluir um novo jogo ou atualizar um item existente.</p>
         </div>
 
         <form id="game-form" class="game-form">
@@ -149,17 +149,17 @@
           </label>
 
           <label>
-            <span id="form-genre-label">Genero</span>
-            <input name="genre" type="text" placeholder="Acao, RPG, Corrida..." required>
+            <span id="form-genre-label">Gênero</span>
+            <input name="genre" type="text" placeholder="Ação, RPG, Corrida..." required>
           </label>
 
           <label>
-            <span id="form-year-label">Ano de lancamento</span>
+            <span id="form-year-label">Ano de lançamento</span>
             <input name="releaseYear" type="number" min="1980" max="2035" required>
           </label>
 
           <label>
-            <span id="form-price-label">Preco medio (R$)</span>
+            <span id="form-price-label">Preço médio (R$)</span>
             <input name="averagePriceBrl" type="number" min="0" step="0.01" required>
           </label>
 
@@ -173,37 +173,37 @@
           </label>
 
           <label>
-            <span id="form-format-label">Midia</span>
+            <span id="form-format-label">Mídia</span>
             <select name="format" required>
-              <option value="Fisica">Fisica</option>
+              <option value="Fisica">Física</option>
               <option value="Digital">Digital</option>
               <option value="Colecionador">Colecionador</option>
             </select>
           </label>
 
           <label>
-            <span id="form-condition-label">Condicao</span>
+            <span id="form-condition-label">Condição</span>
             <input name="condition" type="text" placeholder="Completo, lacrado, usado...">
           </label>
 
           <label class="wide">
-            <span id="form-notes-label">Observacoes</span>
-            <textarea name="notes" rows="3" placeholder="Edicao, steelbook, idioma, observacoes de compra..."></textarea>
+            <span id="form-notes-label">Observações</span>
+            <textarea name="notes" rows="3" placeholder="Edição, steelbook, idioma, observações de compra..."></textarea>
           </label>
 
           <label class="wide">
-            <span id="form-photo-label">Foto da capa ou da midia</span>
+            <span id="form-photo-label">Foto da capa ou da mídia</span>
             <input name="photo" type="file" accept="image/*">
           </label>
 
-          <p class="wide form-help" id="form-photo-help">Envie uma imagem JPG, PNG ou WebP com tamanho maximo de 2 MB.</p>
+          <p class="wide form-help" id="form-photo-help">Envie uma imagem JPG, PNG ou WebP com tamanho máximo de 2 MB.</p>
 
-          <p class="wide form-help" id="current-image-label">A imagem atual sera mantida se voce nao enviar outra.</p>
+          <p class="wide form-help" id="current-image-label">A imagem atual será mantida se você não enviar outra.</p>
 
           <div class="form-actions wide">
             <button class="primary" id="submit-button" type="submit">Salvar jogo</button>
-            <button class="secondary hidden" id="cancel-edit" type="button">Cancelar edicao</button>
-            <button class="secondary" id="reset-storage" type="button">Restaurar colecao inicial</button>
+            <button class="secondary hidden" id="cancel-edit" type="button">Cancelar edição</button>
+            <button class="secondary" id="reset-storage" type="button">Restaurar coleção inicial</button>
           </div>
         </form>
       </section>
