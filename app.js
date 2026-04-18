@@ -1,6 +1,4 @@
 (function () {
-  const STORAGE_KEY = "game-collection-library-state-v2";
-  const LEGACY_KEY = "game-collection-library-custom-games";
   const VIEW_KEY = "game-collection-library-view-mode";
   const LANGUAGE_KEY = "game-collection-library-language";
   const MAX_IMAGE_SIZE_BYTES = 2 * 1024 * 1024;
@@ -367,34 +365,6 @@
     return normalized;
   }
 
-  function loadGames() {
-    try {
-      const persisted = localStorage.getItem(STORAGE_KEY);
-      if (persisted) {
-        const parsed = JSON.parse(persisted);
-        if (Array.isArray(parsed)) {
-          return mergeWithSeeds(parsed);
-        }
-      }
-
-      const legacy = localStorage.getItem(LEGACY_KEY);
-      if (legacy) {
-        const parsedLegacy = JSON.parse(legacy);
-        if (Array.isArray(parsedLegacy)) {
-          return mergeWithSeeds(parsedLegacy);
-        }
-      }
-    } catch (error) {
-      console.warn("Nao foi possivel carregar a colecao salva.", error);
-    }
-
-    return cloneSeeds();
-  }
-
-  function saveGames() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(games));
-  }
-
   async function loadProjectGames() {
     const response = await fetch(COLLECTION_API_URL, { cache: "no-store" });
     if (!response.ok) {
@@ -411,10 +381,8 @@
   }
 
   async function persistGames() {
-    saveGames();
-
     if (!supportsProjectStorage) {
-      return;
+      throw new Error("Abra o site com npm start para salvar a colecao no projeto.");
     }
 
     const response = await fetch(COLLECTION_API_URL, {
@@ -428,6 +396,13 @@
     if (!response.ok) {
       throw new Error("Nao foi possivel salvar a colecao no projeto.");
     }
+
+    const payload = await response.json();
+    const collection = Array.isArray(payload) ? payload : payload.games;
+    if (!Array.isArray(collection)) {
+      throw new Error("A resposta do salvamento da colecao e invalida.");
+    }
+    games = mergeWithSeeds(collection);
   }
 
   function saveLanguage() {
@@ -1021,7 +996,6 @@
     }
 
     games = cloneSeeds();
-    localStorage.removeItem(LEGACY_KEY);
     await persistGames();
     refreshFilterOptions();
     clearForm();
@@ -1124,11 +1098,10 @@
 
   async function initializeApp() {
     try {
-      games = supportsProjectStorage ? await loadProjectGames() : loadGames();
-      saveGames();
+      games = supportsProjectStorage ? await loadProjectGames() : cloneSeeds();
     } catch (error) {
-      console.warn("Nao foi possivel carregar a colecao do projeto, usando fallback local.", error);
-      games = loadGames();
+      console.warn("Nao foi possivel carregar a colecao do projeto.", error);
+      games = cloneSeeds();
     }
 
     refreshFilterOptions();
@@ -1140,7 +1113,7 @@
 
   initializeApp().catch((error) => {
     console.error(error);
-    games = loadGames();
+    games = cloneSeeds();
     refreshFilterOptions();
     bindEvents();
     clearForm();

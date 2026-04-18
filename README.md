@@ -37,11 +37,6 @@ Area da biblioteca com cards, preco medio e acoes de editar ou excluir:
 4. Quando enviar uma capa nova, o arquivo sera salvo em `assets/covers/`.
 5. As alteracoes da colecao ficam persistidas em `data/library-games.json`.
 
-## Modo sem servidor
-
-1. Se voce abrir `index.html` diretamente no navegador, o site ainda funciona.
-2. Nesse modo, as alteracoes continuam sendo salvas apenas no `localStorage`.
-
 ## Observacoes sobre os precos
 
 - Os precos medios iniciais foram estimados com base em pesquisas no Mercado Livre em abril de 2026.

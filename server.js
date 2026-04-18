@@ -11,6 +11,8 @@ const PORT = Number(process.env.PORT) || 3000;
 const HOST = "127.0.0.1";
 const REPO_ROOT = __dirname;
 
+saveCollection(REPO_ROOT, loadCollection(REPO_ROOT));
+
 const MIME_TYPES = {
   ".css": "text/css; charset=utf-8",
   ".html": "text/html; charset=utf-8",

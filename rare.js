@@ -1,6 +1,4 @@
 (function () {
-  const STORAGE_KEY = "game-collection-library-state-v2";
-  const LEGACY_KEY = "game-collection-library-custom-games";
   const LANGUAGE_KEY = "game-collection-library-language";
   const COLLECTION_API_URL = "/api/collection";
   const seedGames = Array.isArray(window.SEED_GAMES) ? window.SEED_GAMES : [];
@@ -125,30 +123,6 @@
     });
 
     return [...mergedById.values()];
-  }
-
-  function loadGames() {
-    try {
-      const persisted = localStorage.getItem(STORAGE_KEY);
-      if (persisted) {
-        const parsed = JSON.parse(persisted);
-        if (Array.isArray(parsed)) {
-          return mergeWithSeeds(parsed);
-        }
-      }
-
-      const legacy = localStorage.getItem(LEGACY_KEY);
-      if (legacy) {
-        const parsedLegacy = JSON.parse(legacy);
-        if (Array.isArray(parsedLegacy)) {
-          return mergeWithSeeds(parsedLegacy);
-        }
-      }
-    } catch (error) {
-      console.warn("Nao foi possivel carregar a colecao salva.", error);
-    }
-
-    return cloneSeeds();
   }
 
   async function loadProjectGames() {
@@ -294,10 +268,10 @@
     let games;
 
     try {
-      games = supportsProjectStorage ? await loadProjectGames() : loadGames();
+      games = supportsProjectStorage ? await loadProjectGames() : cloneSeeds();
     } catch (error) {
-      console.warn("Nao foi possivel carregar a colecao do projeto, usando fallback local.", error);
-      games = loadGames();
+      console.warn("Nao foi possivel carregar a colecao do projeto.", error);
+      games = cloneSeeds();
     }
 
     updateStaticTexts();
@@ -307,6 +281,6 @@
   initializePage().catch((error) => {
     console.error(error);
     updateStaticTexts();
-    render(loadGames());
+    render(cloneSeeds());
   });
 })();
