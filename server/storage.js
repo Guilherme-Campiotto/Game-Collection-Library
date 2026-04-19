@@ -1,9 +1,10 @@
 const fs = require("node:fs");
 const path = require("node:path");
-const vm = require("node:vm");
 
 const COLLECTION_FILE = path.join("data", "library-games.json");
 const COVERS_DIR = path.join("assets", "covers");
+const COVERS_PREFIX = COVERS_DIR.replaceAll("\\", "/");
+const COVER_EXTENSIONS = new Set([".jpeg", ".jpg", ".png", ".webp"]);
 
 function slugify(value) {
   return String(value ?? "")
@@ -14,39 +15,11 @@ function slugify(value) {
     .replace(/(^-|-$)/g, "");
 }
 
-function loadSeedGames(repoRoot) {
-  const seedFile = path.join(repoRoot, "data", "seed-games.js");
-  const source = fs.readFileSync(seedFile, "utf8");
-  const context = { window: {} };
-
-  vm.createContext(context);
-  vm.runInContext(source, context, { filename: seedFile });
-
-  return Array.isArray(context.window.SEED_GAMES) ? context.window.SEED_GAMES : [];
-}
-
-function mergeWithSeeds(seedGames, collection) {
-  const mergedById = new Map();
-
-  seedGames.forEach((game) => {
-    mergedById.set(game.id, { ...game });
-  });
-
-  collection.forEach((game) => {
-    if (game && game.id) {
-      mergedById.set(game.id, { ...game });
-    }
-  });
-
-  return [...mergedById.values()];
-}
-
 function loadCollection(repoRoot) {
-  const seedGames = loadSeedGames(repoRoot);
   const collectionPath = path.join(repoRoot, COLLECTION_FILE);
 
   if (!fs.existsSync(collectionPath)) {
-    return seedGames;
+    return [];
   }
 
   const content = fs.readFileSync(collectionPath, "utf8");
@@ -57,7 +30,7 @@ function loadCollection(repoRoot) {
     throw new Error("Collection file must contain an array of games.");
   }
 
-  return mergeWithSeeds(seedGames, collection);
+  return collection;
 }
 
 function saveCollection(repoRoot, games) {
@@ -87,13 +60,88 @@ function saveUploadedCover(repoRoot, { fileName, dataUrl }) {
   return relativePath.replaceAll("\\", "/");
 }
 
+function normalizeRelativeImagePath(imagePath) {
+  return String(imagePath || "")
+    .replaceAll("\\", "/")
+    .replace(/^\/+/, "");
+}
+
+function resolveManagedCoverPath(repoRoot, imagePath) {
+  const normalizedPath = normalizeRelativeImagePath(imagePath);
+  if (!normalizedPath.startsWith(`${COVERS_PREFIX}/`)) {
+    return null;
+  }
+
+  const coversRoot = path.resolve(repoRoot, COVERS_DIR);
+  const absolutePath = path.resolve(repoRoot, normalizedPath);
+  if (!absolutePath.startsWith(`${coversRoot}${path.sep}`)) {
+    return null;
+  }
+
+  return {
+    absolutePath,
+    relativePath: normalizedPath
+  };
+}
+
+function collectManagedCoverPaths(repoRoot, games) {
+  const paths = new Set();
+
+  (Array.isArray(games) ? games : []).forEach((game) => {
+    const resolved = resolveManagedCoverPath(repoRoot, game?.image);
+    if (resolved) {
+      paths.add(resolved.relativePath);
+    }
+  });
+
+  return paths;
+}
+
+function listManagedCoverFiles(repoRoot) {
+  const coversRoot = path.join(repoRoot, COVERS_DIR);
+  if (!fs.existsSync(coversRoot)) {
+    return [];
+  }
+
+  return fs.readdirSync(coversRoot)
+    .filter((fileName) => COVER_EXTENSIONS.has(path.extname(fileName).toLowerCase()))
+    .map((fileName) => `${COVERS_PREFIX}/${fileName}`);
+}
+
+function removeUnusedCovers(repoRoot, { previousGames = [], nextGames = [], preservedGames = [] } = {}) {
+  const cleanupCandidates = new Set([
+    ...listManagedCoverFiles(repoRoot),
+    ...collectManagedCoverPaths(repoRoot, previousGames)
+  ]);
+  const activeCoverPaths = new Set([
+    ...collectManagedCoverPaths(repoRoot, nextGames),
+    ...collectManagedCoverPaths(repoRoot, preservedGames)
+  ]);
+  const removedCoverPaths = [];
+
+  cleanupCandidates.forEach((relativePath) => {
+    if (activeCoverPaths.has(relativePath)) {
+      return;
+    }
+
+    const resolved = resolveManagedCoverPath(repoRoot, relativePath);
+    if (!resolved || !fs.existsSync(resolved.absolutePath)) {
+      return;
+    }
+
+    fs.unlinkSync(resolved.absolutePath);
+    removedCoverPaths.push(relativePath);
+  });
+
+  return removedCoverPaths;
+}
+
 module.exports = {
   COLLECTION_FILE,
   COVERS_DIR,
-  loadSeedGames,
   loadCollection,
   saveCollection,
   saveUploadedCover,
-  mergeWithSeeds,
+  removeUnusedCovers,
   slugify
 };

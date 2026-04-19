@@ -14,7 +14,7 @@ Tela inicial com painel, resumo da coleção e filtros:
 
 ## O que o site faz
 
-- Mostra um painel com jogos da coleção, usando as fotos da estante como base inicial.
+- Mostra um painel com jogos da coleção cadastrados em `data/library-games.json`.
 - Permite buscar, filtrar e ordenar por plataforma, gênero, status, ano e preço médio.
 - Traz um formulário para cadastrar novos itens direto no navegador.
 - Permite cadastrar um jogo a partir de uma foto usando IA com busca web.
@@ -27,8 +27,7 @@ Tela inicial com painel, resumo da coleção e filtros:
 - `styles.css`: visual da interface
 - `app.js`: lógica de filtros, cadastro, persistência e exportação
 - `server.js`: servidor local para salvar coleção e uploads dentro do projeto
-- `data/seed-games.js`: jogos iniciais identificados nas fotos
-- `data/library-games.json`: arquivo criado automaticamente com a sua coleção salva
+- `data/library-games.json`: fonte única dos jogos cadastrados na coleção
 
 ## Como usar
 

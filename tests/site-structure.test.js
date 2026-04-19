@@ -29,7 +29,7 @@ test("index.html contains the main interactive sections", () => {
   }
 });
 
-test("index.html loads the seed data and the main app script locally", () => {
-  assert.match(indexHtml, /<script src="data\/seed-games\.js"><\/script>/);
+test("index.html loads the main app script locally", () => {
+  assert.doesNotMatch(indexHtml, /data\/seed-games\.js/);
   assert.match(indexHtml, /<script src="app\.js"><\/script>/);
 });

@@ -3,11 +3,16 @@ const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const os = require("node:os");
 const path = require("node:path");
-const { loadSeedGames, loadCollection, saveCollection, saveUploadedCover } = require("../server/storage");
+const {
+  loadCollection,
+  removeUnusedCovers,
+  saveCollection,
+  saveUploadedCover
+} = require("../server/storage");
 
-test("server storage can load seed games from the repository", () => {
+test("server storage can load library games from the repository", () => {
   const repoRoot = path.resolve(__dirname, "..");
-  const games = loadSeedGames(repoRoot);
+  const games = loadCollection(repoRoot);
 
   assert.ok(Array.isArray(games));
   assert.ok(games.length > 0);
@@ -30,11 +35,6 @@ test("server storage persists and reloads the collection file", () => {
   const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "gcl-collection-"));
   const dataDir = path.join(tempRoot, "data");
   fs.mkdirSync(dataDir, { recursive: true });
-  fs.writeFileSync(
-    path.join(dataDir, "seed-games.js"),
-    'window.SEED_GAMES = [{ id: "seed", title: "Seed Game", platform: "PS4", genre: "Action", releaseYear: 2020, averagePriceBrl: 100, status: "Na fila", format: "Fisica", image: "assets/covers/seed.jpg" }];\n',
-    "utf8"
-  );
 
   saveCollection(tempRoot, [
     {
@@ -51,7 +51,42 @@ test("server storage persists and reloads the collection file", () => {
   ]);
 
   const loaded = loadCollection(tempRoot);
-  const ids = loaded.map((game) => game.id).sort();
+  const ids = loaded.map((game) => game.id);
 
-  assert.deepEqual(ids, ["custom", "seed"]);
+  assert.deepEqual(ids, ["custom"]);
+});
+
+test("server storage removes old uploaded covers that are no longer referenced", () => {
+  const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "gcl-cleanup-"));
+  const coversDir = path.join(tempRoot, "assets", "covers");
+  fs.mkdirSync(coversDir, { recursive: true });
+
+  const oldCover = path.join(coversDir, "old-cover.jpg");
+  const activeCover = path.join(coversDir, "active-cover.jpg");
+  const protectedCover = path.join(coversDir, "protected-cover.jpg");
+  const orphanCover = path.join(coversDir, "orphan-cover.jpg");
+  fs.writeFileSync(oldCover, "old");
+  fs.writeFileSync(activeCover, "active");
+  fs.writeFileSync(protectedCover, "protected");
+  fs.writeFileSync(orphanCover, "orphan");
+
+  const removed = removeUnusedCovers(tempRoot, {
+    previousGames: [
+      { id: "old", image: "assets/covers/old-cover.jpg" },
+      { id: "active", image: "assets/covers/active-cover.jpg" },
+      { id: "protected", image: "assets/covers/protected-cover.jpg" }
+    ],
+    nextGames: [
+      { id: "active", image: "assets/covers/active-cover.jpg" }
+    ],
+    preservedGames: [
+      { id: "protected", image: "assets/covers/protected-cover.jpg" }
+    ]
+  });
+
+  assert.deepEqual(removed.sort(), ["assets/covers/old-cover.jpg", "assets/covers/orphan-cover.jpg"]);
+  assert.equal(fs.existsSync(oldCover), false);
+  assert.equal(fs.existsSync(activeCover), true);
+  assert.equal(fs.existsSync(protectedCover), true);
+  assert.equal(fs.existsSync(orphanCover), false);
 });

@@ -3,6 +3,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 const {
   loadCollection,
+  removeUnusedCovers,
   saveCollection,
   saveUploadedCover
 } = require("./server/storage");
@@ -98,7 +99,12 @@ const server = http.createServer(async (request, response) => {
         return;
       }
 
+      const previousGames = loadCollection(REPO_ROOT);
       saveCollection(REPO_ROOT, games);
+      removeUnusedCovers(REPO_ROOT, {
+        previousGames,
+        nextGames: games
+      });
       sendJson(response, 200, { games });
       return;
     }

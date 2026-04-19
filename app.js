@@ -6,8 +6,6 @@
   const UPLOAD_API_URL = "/api/upload";
   const AI_KEY_API_URL = "/api/ai-key";
   const IDENTIFY_GAME_API_URL = "/api/identify-game";
-  const seedGames = Array.isArray(window.SEED_GAMES) ? window.SEED_GAMES : [];
-  const seedImageMap = Object.fromEntries(seedGames.map((game) => [game.id, game.image]));
   const supportsProjectStorage = window.location.protocol.startsWith("http");
 
   const translations = {
@@ -82,7 +80,6 @@
       saveGame: "Salvar jogo",
       saveChanges: "Salvar alterações",
       cancelEdit: "Cancelar edição",
-      restoreCollection: "Restaurar coleção inicial",
       allPlatforms: "Todas as plataformas",
       allGenres: "Todos os gêneros",
       allStatuses: "Todos os status",
@@ -99,7 +96,6 @@
       originManual: "Manual",
       mediaLabel: "Mídia",
       conditionLabel: "Condição",
-      originLabel: "Origem",
       priceSourceLabel: "Fonte do preço",
       edit: "Editar",
       delete: "Excluir",
@@ -107,8 +103,6 @@
       resultsCount: (count, total) => `${count} jogo(s) visíveis, somando ${total} em valor médio.`,
       imageAlt: (title) => `Capa de ${title}`,
       imageCurrent: (title) => `Capa de ${title}`,
-      gameAlertReset:
-        "Isso vai restaurar a coleção inicial e remover alterações salvas no navegador. Continuar?",
       gameAlertDelete: (title) => `Excluir "${title}" da coleção?`,
       importError: "O arquivo precisa conter um array de jogos.",
       toastAddSuccess: (title) => `"${title}" cadastrado com sucesso.`,
@@ -207,7 +201,6 @@
       saveGame: "Save game",
       saveChanges: "Save changes",
       cancelEdit: "Cancel editing",
-      restoreCollection: "Restore initial collection",
       allPlatforms: "All platforms",
       allGenres: "All genres",
       allStatuses: "All statuses",
@@ -224,7 +217,6 @@
       originManual: "Manual",
       mediaLabel: "Format",
       conditionLabel: "Condition",
-      originLabel: "Origin",
       priceSourceLabel: "Price source",
       edit: "Edit",
       delete: "Delete",
@@ -232,8 +224,6 @@
       resultsCount: (count, total) => `${count} visible game(s), totaling ${total} in average market value.`,
       imageAlt: (title) => `Cover for ${title}`,
       imageCurrent: (title) => `Cover for ${title}`,
-      gameAlertReset:
-        "This will restore the initial collection and remove changes saved in the browser. Continue?",
       gameAlertDelete: (title) => `Delete \"${title}\" from the collection?`,
       importError: "The file must contain an array of games.",
       toastAddSuccess: (title) => `"${title}" added successfully.`,
@@ -282,7 +272,6 @@
     gameForm: document.getElementById("game-form"),
     exportButton: document.getElementById("export-json"),
     importInput: document.getElementById("import-json"),
-    resetStorage: document.getElementById("reset-storage"),
     toggleView: document.getElementById("toggle-view"),
     scrollToForm: document.getElementById("scroll-to-form"),
     identifyByPhoto: document.getElementById("identify-by-photo"),
@@ -336,7 +325,7 @@
     formPhotoHelp: document.getElementById("form-photo-help")
   };
 
-  let games = cloneSeeds();
+  let games = [];
   let currentEditId = null;
   let viewMode = localStorage.getItem(VIEW_KEY) || "grid";
   let currentLanguage = localStorage.getItem(LANGUAGE_KEY) || "pt-BR";
@@ -347,25 +336,8 @@
     return translations[currentLanguage] || translations["pt-BR"];
   }
 
-  function cloneSeeds() {
-    return seedGames.map((game) => ({ ...game }));
-  }
-
-  function mergeWithSeeds(collection) {
-    const normalizedCollection = Array.isArray(collection) ? collection.map(normalizeGame) : [];
-    const mergedById = new Map();
-
-    cloneSeeds().forEach((game) => {
-      mergedById.set(game.id, game);
-    });
-
-    normalizedCollection.forEach((game) => {
-      if (game && game.id) {
-        mergedById.set(game.id, game);
-      }
-    });
-
-    return [...mergedById.values()];
+  function normalizeCollection(collection) {
+    return Array.isArray(collection) ? collection.map(normalizeGame).filter(Boolean) : [];
   }
 
   function normalizeGame(game) {
@@ -373,16 +345,7 @@
       return game;
     }
 
-    const normalized = { ...game };
-    if (
-      seedImageMap[normalized.id] &&
-      typeof normalized.image === "string" &&
-      (normalized.image.startsWith("http") || /^photo-\d+\.jpe?g$/i.test(normalized.image))
-    ) {
-      normalized.image = seedImageMap[normalized.id];
-    }
-
-    return normalized;
+    return { ...game };
   }
 
   async function loadProjectGames() {
@@ -397,7 +360,7 @@
       throw new Error("A resposta da coleção do projeto é inválida.");
     }
 
-    return mergeWithSeeds(collection);
+    return normalizeCollection(collection);
   }
 
   async function persistGames() {
@@ -422,7 +385,7 @@
     if (!Array.isArray(collection)) {
       throw new Error("A resposta do salvamento da coleção é inválida.");
     }
-    games = mergeWithSeeds(collection);
+    games = normalizeCollection(collection);
   }
 
   function saveLanguage() {
@@ -626,8 +589,6 @@
     elements.formPhotoHelp.textContent = t().formPhotoHelp;
     elements.submitButton.textContent = currentEditId ? t().saveChanges : t().saveGame;
     elements.cancelEdit.textContent = t().cancelEdit;
-    elements.resetStorage.textContent = t().restoreCollection;
-
     [...elements.gameForm.elements.status.options].forEach((option) => {
       option.textContent = translateStatus(option.value);
     });
@@ -790,7 +751,6 @@
       meta.append(
         createMetaItem(t().mediaLabel, translateFormat(game.format)),
         createMetaItem(t().conditionLabel, game.condition || t().noCondition),
-        createMetaItem(t().originLabel, game.location || t().originManual),
         createMetaItem(t().priceSourceLabel, translateSourceLabel(game.sourceLabel || "Manual"))
       );
 
@@ -1066,7 +1026,7 @@
         throw new Error(t().importError);
       }
 
-      games = mergeWithSeeds(imported);
+      games = normalizeCollection(imported);
       await persistGames();
       refreshFilterOptions();
       clearForm();
@@ -1087,19 +1047,6 @@
     elements.yearMinFilter.value = "";
     elements.priceMaxFilter.value = "";
     elements.sortSelect.value = "title-asc";
-    render();
-  }
-
-  async function resetStorage() {
-    if (!confirm(t().gameAlertReset)) {
-      return;
-    }
-
-    games = cloneSeeds();
-    await persistGames();
-    refreshFilterOptions();
-    clearForm();
-    updateStaticTexts();
     render();
   }
 
@@ -1200,12 +1147,6 @@
       });
     });
     elements.clearFilters.addEventListener("click", clearFilters);
-    elements.resetStorage.addEventListener("click", () => {
-      resetStorage().catch((error) => {
-        console.error(error);
-        showToast("error", error.message || t().toastGenericError);
-      });
-    });
     elements.toggleView.addEventListener("click", () => {
       viewMode = viewMode === "grid" ? "table" : "grid";
       updateView();
@@ -1223,10 +1164,10 @@
 
   async function initializeApp() {
     try {
-      games = supportsProjectStorage ? await loadProjectGames() : cloneSeeds();
+      games = supportsProjectStorage ? await loadProjectGames() : [];
     } catch (error) {
       console.warn("Não foi possível carregar a coleção do projeto.", error);
-      games = cloneSeeds();
+      games = [];
     }
 
     refreshFilterOptions();
@@ -1238,7 +1179,7 @@
 
   initializeApp().catch((error) => {
     console.error(error);
-    games = cloneSeeds();
+    games = [];
     refreshFilterOptions();
     bindEvents();
     clearForm();

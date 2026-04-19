@@ -1,8 +1,6 @@
 (function () {
   const LANGUAGE_KEY = "game-collection-library-language";
   const COLLECTION_API_URL = "/api/collection";
-  const seedGames = Array.isArray(window.SEED_GAMES) ? window.SEED_GAMES : [];
-  const seedImageMap = Object.fromEntries(seedGames.map((game) => [game.id, game.image]));
   const supportsProjectStorage = window.location.protocol.startsWith("http");
 
   const translations = {
@@ -87,42 +85,16 @@
     return translations[currentLanguage] || translations["pt-BR"];
   }
 
-  function cloneSeeds() {
-    return seedGames.map((game) => ({ ...game }));
-  }
-
   function normalizeGame(game) {
     if (!game || typeof game !== "object") {
       return game;
     }
 
-    const normalized = { ...game };
-    if (
-      seedImageMap[normalized.id] &&
-      typeof normalized.image === "string" &&
-      (normalized.image.startsWith("http") || /^photo-\d+\.jpe?g$/i.test(normalized.image))
-    ) {
-      normalized.image = seedImageMap[normalized.id];
-    }
-
-    return normalized;
+    return { ...game };
   }
 
-  function mergeWithSeeds(collection) {
-    const normalizedCollection = Array.isArray(collection) ? collection.map(normalizeGame) : [];
-    const mergedById = new Map();
-
-    cloneSeeds().forEach((game) => {
-      mergedById.set(game.id, game);
-    });
-
-    normalizedCollection.forEach((game) => {
-      if (game && game.id) {
-        mergedById.set(game.id, game);
-      }
-    });
-
-    return [...mergedById.values()];
+  function normalizeCollection(collection) {
+    return Array.isArray(collection) ? collection.map(normalizeGame).filter(Boolean) : [];
   }
 
   async function loadProjectGames() {
@@ -137,7 +109,7 @@
       throw new Error("A resposta da coleção do projeto é inválida.");
     }
 
-    return mergeWithSeeds(collection);
+    return normalizeCollection(collection);
   }
 
   function saveLanguage() {
@@ -268,10 +240,10 @@
     let games;
 
     try {
-      games = supportsProjectStorage ? await loadProjectGames() : cloneSeeds();
+      games = supportsProjectStorage ? await loadProjectGames() : [];
     } catch (error) {
       console.warn("Não foi possível carregar a coleção do projeto.", error);
-      games = cloneSeeds();
+      games = [];
     }
 
     updateStaticTexts();
@@ -281,6 +253,6 @@
   initializePage().catch((error) => {
     console.error(error);
     updateStaticTexts();
-    render(cloneSeeds());
+    render([]);
   });
 })();

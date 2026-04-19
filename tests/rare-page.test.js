@@ -20,7 +20,7 @@ test("rare.html contains the podium and rare games table sections", () => {
   }
 });
 
-test("rare.html loads the seed data and rarity script locally", () => {
-  assert.match(rareHtml, /<script src="data\/seed-games\.js"><\/script>/);
+test("rare.html loads the rarity script locally", () => {
+  assert.doesNotMatch(rareHtml, /data\/seed-games\.js/);
   assert.match(rareHtml, /<script src="rare\.js"><\/script>/);
 });
