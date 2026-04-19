@@ -87,7 +87,7 @@ textarea {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  margin: 14px 0 0;
+  margin: 14px 0 10px;
 }
 
 .site-nav-link {

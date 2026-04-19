@@ -114,8 +114,9 @@
       toastImageTooLarge: "A imagem excede o limite de 2 MB.",
       toastAiKeySaved: "Chave da IA salva localmente.",
       toastAiKeyRequired: "Configure a chave da IA antes de cadastrar por foto.",
-      toastIdentifyProgress: "Analisando a foto e buscando dados do jogo...",
-      toastIdentifySuccess: (title) => `"${title}" cadastrado pela foto.`,
+      toastIdentifyProgress: "Analisando a foto e buscando dados dos jogos...",
+      toastIdentifySuccess: (count) =>
+        count === 1 ? "1 jogo cadastrado pela foto." : `${count} jogos cadastrados pela foto.`,
       toastIdentifyError: "Não foi possível cadastrar o jogo pela foto.",
       identifyPhotoLoading: "Analisando foto...",
       aiKeyPrompt:
@@ -237,7 +238,8 @@
       toastAiKeySaved: "AI key saved locally.",
       toastAiKeyRequired: "Configure the AI key before adding by photo.",
       toastIdentifyProgress: "Analyzing the photo and searching for game data...",
-      toastIdentifySuccess: (title) => `"${title}" added from the photo.`,
+      toastIdentifySuccess: (count) =>
+        count === 1 ? "1 game added from the photo." : `${count} games added from the photo.`,
       toastIdentifyError: "The game could not be added from the photo.",
       identifyPhotoLoading: "Analyzing photo...",
       aiKeyPrompt:
@@ -905,17 +907,18 @@
         throw new Error(payload.error || t().toastIdentifyError);
       }
 
-      if (!payload.game) {
+      const identifiedGames = Array.isArray(payload.games) ? payload.games : payload.game ? [payload.game] : [];
+      if (!identifiedGames.length) {
         throw new Error(t().toastIdentifyError);
       }
 
-      games.unshift(payload.game);
+      games.unshift(...identifiedGames);
       await persistGames();
       refreshFilterOptions();
       clearForm();
       updateStaticTexts();
       render();
-      showToast("success", t().toastIdentifySuccess(payload.game.title));
+      showToast("success", t().toastIdentifySuccess(identifiedGames.length));
     } finally {
       setIdentifyPhotoLoading(false);
     }

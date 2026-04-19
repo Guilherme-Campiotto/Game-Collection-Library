@@ -45,8 +45,8 @@ Tela inicial com painel, resumo da coleção e filtros:
 1. Clique em `Configurar IA`.
 2. Cole sua API key da OpenAI.
 3. A chave será salva apenas localmente em `.local/openai-key.json`, que é ignorado pelo Git.
-4. Clique em `Cadastrar por foto` e selecione uma imagem do jogo.
-5. O servidor usa a foto e busca web para sugerir título, plataforma, gênero, ano e preço médio.
+4. Clique em `Cadastrar por foto` e selecione uma imagem com um ou mais jogos.
+5. O servidor usa a foto e busca web para sugerir título, plataforma, gênero, ano e preço médio de cada jogo identificado.
 
 ## Observações sobre os preços
 

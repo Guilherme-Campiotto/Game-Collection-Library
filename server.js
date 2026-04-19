@@ -158,8 +158,8 @@ const server = http.createServer(async (request, response) => {
     if (request.method === "POST" && url.pathname === "/api/identify-game") {
       const body = await readBody(request);
       const payload = JSON.parse(body || "{}");
-      const game = await identifyGameFromPhoto(REPO_ROOT, payload);
-      sendJson(response, 200, { game });
+      const games = await identifyGameFromPhoto(REPO_ROOT, payload);
+      sendJson(response, 200, { games });
       return;
     }
 
