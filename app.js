@@ -32,7 +32,6 @@
       statsItems: "Itens cadastrados",
       statsValue: "Valor estimado",
       statsPlatforms: "Plataformas",
-      statsNewest: "Jogo mais novo",
       controlsEyebrow: "Explorar",
       controlsTitle: "Buscar, filtrar e ordenar",
       searchLabel: "Busca",
@@ -158,7 +157,6 @@
       statsItems: "Registered items",
       statsValue: "Estimated value",
       statsPlatforms: "Platforms",
-      statsNewest: "Newest game",
       controlsEyebrow: "Explore",
       controlsTitle: "Search, filter, and sort",
       searchLabel: "Search",
@@ -707,8 +705,7 @@
     const stats = [
       { label: t().statsItems, value: total },
       { label: t().statsValue, value: currency(totalValue) },
-      { label: t().statsPlatforms, value: platforms },
-      { label: t().statsNewest, value: newest || "-" }
+      { label: t().statsPlatforms, value: platforms }
     ];
 
     elements.statsGrid.innerHTML = "";
