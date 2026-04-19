@@ -19,6 +19,7 @@ test("index.html contains the main interactive sections", () => {
     "menu-language-toggle",
     "nav-home-link",
     "nav-rare-link",
+    "nav-gallery-link",
     "identify-by-photo",
     "configure-ai-key",
     "toast-container"

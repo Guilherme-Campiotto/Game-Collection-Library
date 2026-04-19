@@ -10,6 +10,7 @@
       eyebrow: "Raridades",
       navHome: "Biblioteca",
       navRare: "Jogos mais raros",
+      navGallery: "Fotos da coleção",
       menuLanguage: "Idioma: PT / EN",
       title: "Jogos mais raros da coleção",
       text:
@@ -35,6 +36,7 @@
       eyebrow: "Rarities",
       navHome: "Library",
       navRare: "Rarest games",
+      navGallery: "Collection photos",
       menuLanguage: "Language: PT / EN",
       title: "Rarest games in the collection",
       text:
@@ -62,6 +64,7 @@
     eyebrow: document.getElementById("rare-eyebrow"),
     navHome: document.getElementById("rare-nav-home-link"),
     navRare: document.getElementById("rare-nav-link"),
+    navGallery: document.getElementById("rare-nav-gallery-link"),
     title: document.getElementById("rare-title"),
     text: document.getElementById("rare-text"),
     topEyebrow: document.getElementById("podium-eyebrow"),
@@ -199,6 +202,7 @@
     elements.eyebrow.textContent = t().eyebrow;
     elements.navHome.textContent = t().navHome;
     elements.navRare.textContent = t().navRare;
+    elements.navGallery.textContent = t().navGallery;
     elements.menuLanguageToggle.textContent = t().menuLanguage;
     elements.title.textContent = t().title;
     elements.text.textContent = t().text;

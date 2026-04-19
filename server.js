@@ -2,9 +2,12 @@ const http = require("node:http");
 const fs = require("node:fs");
 const path = require("node:path");
 const {
+  deleteGalleryPhoto,
+  listGalleryPhotos,
   loadCollection,
   removeUnusedCovers,
   saveCollection,
+  saveGalleryPhoto,
   saveUploadedCover
 } = require("./server/storage");
 const {
@@ -114,6 +117,28 @@ const server = http.createServer(async (request, response) => {
       const payload = JSON.parse(body || "{}");
       const imagePath = saveUploadedCover(REPO_ROOT, payload);
       sendJson(response, 200, { imagePath });
+      return;
+    }
+
+    if (request.method === "GET" && url.pathname === "/api/gallery") {
+      const photos = listGalleryPhotos(REPO_ROOT);
+      sendJson(response, 200, { photos });
+      return;
+    }
+
+    if (request.method === "POST" && url.pathname === "/api/gallery/upload") {
+      const body = await readBody(request);
+      const payload = JSON.parse(body || "{}");
+      const photoPath = saveGalleryPhoto(REPO_ROOT, payload);
+      sendJson(response, 200, { photo: { path: photoPath, name: path.basename(photoPath) } });
+      return;
+    }
+
+    if (request.method === "DELETE" && url.pathname === "/api/gallery/photo") {
+      const body = await readBody(request);
+      const payload = JSON.parse(body || "{}");
+      const deletedPath = deleteGalleryPhoto(REPO_ROOT, payload.path);
+      sendJson(response, 200, { deletedPath });
       return;
     }
 

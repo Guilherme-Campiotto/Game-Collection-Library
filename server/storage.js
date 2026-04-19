@@ -3,6 +3,7 @@ const path = require("node:path");
 
 const COLLECTION_FILE = path.join("data", "library-games.json");
 const COVERS_DIR = path.join("assets", "covers");
+const GALLERY_DIR = path.join("assets", "gallery");
 const COVERS_PREFIX = COVERS_DIR.replaceAll("\\", "/");
 const COVER_EXTENSIONS = new Set([".jpeg", ".jpg", ".png", ".webp"]);
 
@@ -40,7 +41,7 @@ function saveCollection(repoRoot, games) {
   return collectionPath;
 }
 
-function saveUploadedCover(repoRoot, { fileName, dataUrl }) {
+function saveImageDataUrl(repoRoot, targetDir, { fileName, dataUrl }) {
   const match = /^data:(image\/(?:png|jpeg|webp));base64,([a-z0-9+/=]+)$/i.exec(dataUrl || "");
   if (!match) {
     throw new Error("Unsupported image format.");
@@ -51,13 +52,21 @@ function saveUploadedCover(repoRoot, { fileName, dataUrl }) {
   const extension = mimeType === "image/png" ? "png" : mimeType === "image/webp" ? "webp" : "jpg";
   const safeName = slugify(fileName) || "cover";
   const targetName = `${safeName}-${Date.now()}.${extension}`;
-  const relativePath = path.join(COVERS_DIR, targetName);
+  const relativePath = path.join(targetDir, targetName);
   const absolutePath = path.join(repoRoot, relativePath);
 
   fs.mkdirSync(path.dirname(absolutePath), { recursive: true });
   fs.writeFileSync(absolutePath, Buffer.from(base64, "base64"));
 
   return relativePath.replaceAll("\\", "/");
+}
+
+function saveUploadedCover(repoRoot, payload) {
+  return saveImageDataUrl(repoRoot, COVERS_DIR, payload);
+}
+
+function saveGalleryPhoto(repoRoot, payload) {
+  return saveImageDataUrl(repoRoot, GALLERY_DIR, payload);
 }
 
 function normalizeRelativeImagePath(imagePath) {
@@ -136,12 +145,65 @@ function removeUnusedCovers(repoRoot, { previousGames = [], nextGames = [], pres
   return removedCoverPaths;
 }
 
+function resolveManagedGalleryPath(repoRoot, imagePath) {
+  const normalizedPath = normalizeRelativeImagePath(imagePath);
+  const galleryPrefix = GALLERY_DIR.replaceAll("\\", "/");
+  if (!normalizedPath.startsWith(`${galleryPrefix}/`)) {
+    return null;
+  }
+
+  const galleryRoot = path.resolve(repoRoot, GALLERY_DIR);
+  const absolutePath = path.resolve(repoRoot, normalizedPath);
+  if (!absolutePath.startsWith(`${galleryRoot}${path.sep}`)) {
+    return null;
+  }
+
+  return {
+    absolutePath,
+    relativePath: normalizedPath
+  };
+}
+
+function listGalleryPhotos(repoRoot) {
+  const galleryRoot = path.join(repoRoot, GALLERY_DIR);
+  if (!fs.existsSync(galleryRoot)) {
+    return [];
+  }
+
+  return fs.readdirSync(galleryRoot)
+    .filter((fileName) => COVER_EXTENSIONS.has(path.extname(fileName).toLowerCase()))
+    .map((fileName) => {
+      const relativePath = `${GALLERY_DIR.replaceAll("\\", "/")}/${fileName}`;
+      const stats = fs.statSync(path.join(galleryRoot, fileName));
+      return {
+        path: relativePath,
+        name: fileName,
+        createdAt: stats.birthtime.toISOString()
+      };
+    })
+    .sort((first, second) => second.createdAt.localeCompare(first.createdAt));
+}
+
+function deleteGalleryPhoto(repoRoot, imagePath) {
+  const resolved = resolveManagedGalleryPath(repoRoot, imagePath);
+  if (!resolved || !fs.existsSync(resolved.absolutePath)) {
+    throw new Error("Gallery photo not found.");
+  }
+
+  fs.unlinkSync(resolved.absolutePath);
+  return resolved.relativePath;
+}
+
 module.exports = {
   COLLECTION_FILE,
   COVERS_DIR,
+  GALLERY_DIR,
   loadCollection,
   saveCollection,
   saveUploadedCover,
+  saveGalleryPhoto,
+  listGalleryPhotos,
+  deleteGalleryPhoto,
   removeUnusedCovers,
   slugify
 };

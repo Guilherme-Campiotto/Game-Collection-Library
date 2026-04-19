@@ -19,6 +19,7 @@ Tela inicial com painel, resumo da coleção e filtros:
 - Traz um formulário para cadastrar novos itens direto no navegador.
 - Permite cadastrar um jogo a partir de uma foto usando IA com busca web.
 - Quando aberto com o servidor local em `npm start`, salva a coleção em `data/library-games.json` e as novas capas em `assets/covers/`.
+- Tem uma página de galeria para guardar fotos da coleção em `assets/gallery/`, com upload, zoom e exclusão.
 - Permite exportar e importar os dados em JSON.
 
 ## Arquivos principais
@@ -26,6 +27,7 @@ Tela inicial com painel, resumo da coleção e filtros:
 - `index.html`: estrutura do site
 - `styles.css`: visual da interface
 - `app.js`: lógica de filtros, cadastro, persistência e exportação
+- `gallery.html` e `gallery.js`: galeria de fotos da coleção
 - `server.js`: servidor local para salvar coleção e uploads dentro do projeto
 - `data/library-games.json`: fonte única dos jogos cadastrados na coleção
 
@@ -35,7 +37,8 @@ Tela inicial com painel, resumo da coleção e filtros:
 2. Abra `http://127.0.0.1:3000` no navegador.
 3. Use o formulário para adicionar ou editar jogos.
 4. Quando enviar uma capa nova, o arquivo será salvo em `assets/covers/`.
-5. As alterações da coleção ficam persistidas em `data/library-games.json`.
+5. Use a página `Fotos da coleção` para enviar, ampliar ou excluir fotos da galeria.
+6. As alterações da coleção ficam persistidas em `data/library-games.json`.
 
 ## Cadastro por foto com IA
 

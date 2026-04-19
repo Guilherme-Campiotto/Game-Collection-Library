@@ -4,9 +4,12 @@ const fs = require("node:fs");
 const os = require("node:os");
 const path = require("node:path");
 const {
+  deleteGalleryPhoto,
+  listGalleryPhotos,
   loadCollection,
   removeUnusedCovers,
   saveCollection,
+  saveGalleryPhoto,
   saveUploadedCover
 } = require("../server/storage");
 
@@ -29,6 +32,25 @@ test("server storage persists uploaded covers inside assets/covers", () => {
 
   assert.match(imagePath, /^assets\/covers\/switch-zelda-\d+\.png$/);
   assert.ok(fs.existsSync(path.join(tempRoot, imagePath)));
+});
+
+test("server storage manages gallery photos inside assets/gallery", () => {
+  const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "gcl-gallery-"));
+  const photoPath = saveGalleryPhoto(tempRoot, {
+    fileName: "Minha Estante",
+    dataUrl: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9WnHCqQAAAAASUVORK5CYII="
+  });
+
+  assert.match(photoPath, /^assets\/gallery\/minha-estante-\d+\.png$/);
+  assert.ok(fs.existsSync(path.join(tempRoot, photoPath)));
+
+  const photos = listGalleryPhotos(tempRoot);
+  assert.equal(photos.length, 1);
+  assert.equal(photos[0].path, photoPath);
+
+  const deletedPath = deleteGalleryPhoto(tempRoot, photoPath);
+  assert.equal(deletedPath, photoPath);
+  assert.equal(fs.existsSync(path.join(tempRoot, photoPath)), false);
 });
 
 test("server storage persists and reloads the collection file", () => {

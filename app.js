@@ -15,6 +15,7 @@
       heroEyebrow: "Coleção Pessoal",
       navHome: "Biblioteca",
       navRare: "Jogos mais raros",
+      navGallery: "Fotos da coleção",
       menuLanguage: "Idioma: PT / EN",
       heroText:
         "Um catálogo visual da sua biblioteca de jogos com cadastro rápido, filtros por plataforma e um painel para acompanhar preço médio de mercado, gênero, ano e status da coleção.",
@@ -136,6 +137,7 @@
       heroEyebrow: "Personal Collection",
       navHome: "Library",
       navRare: "Rarest games",
+      navGallery: "Collection photos",
       menuLanguage: "Language: PT / EN",
       heroText:
         "A visual catalog for your game library with quick registration, platform filters, and a dashboard to track average market price, genre, release year, and collection status.",
@@ -286,6 +288,7 @@
     menuLanguageToggle: document.getElementById("menu-language-toggle"),
     navHomeLink: document.getElementById("nav-home-link"),
     navRareLink: document.getElementById("nav-rare-link"),
+    navGalleryLink: document.getElementById("nav-gallery-link"),
     toastContainer: document.getElementById("toast-container"),
     heroEyebrow: document.getElementById("hero-eyebrow"),
     heroText: document.getElementById("hero-text"),
@@ -530,6 +533,7 @@
     elements.heroEyebrow.textContent = t().heroEyebrow;
     elements.navHomeLink.textContent = t().navHome;
     elements.navRareLink.textContent = t().navRare;
+    elements.navGalleryLink.textContent = t().navGallery;
     elements.menuLanguageToggle.textContent = t().menuLanguage;
     elements.heroText.textContent = t().heroText;
     elements.heroGallery.setAttribute("aria-label", t().heroGalleryLabel);

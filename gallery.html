@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Game Collection | Fotos</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="page-shell">
+    <header class="hero gallery-hero">
+      <div class="hero-copy">
+        <div class="topbar">
+          <p class="eyebrow" id="gallery-eyebrow">Galeria</p>
+        </div>
+        <nav class="site-nav" aria-label="Navegação principal">
+          <a class="site-nav-link" href="index.html" id="gallery-nav-home-link">Biblioteca</a>
+          <a class="site-nav-link" href="rare.html" id="gallery-nav-rare-link">Jogos mais raros</a>
+          <a class="site-nav-link active" href="gallery.html" id="gallery-nav-link">Fotos da coleção</a>
+          <button class="site-nav-link site-nav-button" id="menu-language-toggle" type="button">PT / EN</button>
+        </nav>
+        <h1 id="gallery-title">Fotos da coleção</h1>
+        <p class="hero-text" id="gallery-text">
+          Guarde fotos da estante, detalhes das edições e registros especiais da sua biblioteca.
+        </p>
+        <div class="hero-actions">
+          <label class="primary upload-gallery-label" for="gallery-upload-input" id="gallery-upload-label">
+            Enviar nova foto
+          </label>
+          <input class="hidden" id="gallery-upload-input" type="file" accept="image/*">
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="panel gallery-panel">
+        <div class="section-heading">
+          <p class="eyebrow" id="gallery-list-eyebrow">Álbum</p>
+          <h2 id="gallery-list-title">Registros salvos</h2>
+          <p class="form-help" id="gallery-help">Clique em uma foto para ampliar. Use o ícone no canto para excluir.</p>
+        </div>
+
+        <div class="gallery-grid" id="gallery-grid" aria-live="polite"></div>
+      </section>
+    </main>
+  </div>
+
+  <div class="gallery-lightbox hidden" id="gallery-lightbox" role="dialog" aria-modal="true" aria-label="Foto ampliada">
+    <button class="gallery-lightbox-close" id="gallery-lightbox-close" type="button" aria-label="Fechar">×</button>
+    <img id="gallery-lightbox-image" alt="">
+  </div>
+
+  <div id="toast-container" class="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+  <script src="gallery.js"></script>
+</body>
+</html>

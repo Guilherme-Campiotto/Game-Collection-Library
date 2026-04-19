@@ -11,6 +11,7 @@ test("rare.html contains the podium and rare games table sections", () => {
     "menu-language-toggle",
     "rare-nav-home-link",
     "rare-nav-link",
+    "rare-nav-gallery-link",
     "rare-podium",
     "rare-table-body"
   ];
