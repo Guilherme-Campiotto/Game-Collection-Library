@@ -60,8 +60,3 @@ Galeria de fotos da coleção com upload, zoom e exclusão:
 3. A chave será salva apenas em `.local/openai-key.json` e não será enviada ao Git.
 4. Clique em `Cadastrar por foto` e selecione uma imagem com um ou mais jogos.
 5. O servidor usa a foto e busca web para sugerir título, plataforma, gênero, ano, preço médio e capa oficial de cada jogo identificado.
-
-## Observações Sobre Preços
-
-- Os preços médios iniciais foram estimados com base em pesquisas no mercado brasileiro, principalmente Mercado Livre, por volta de abril de 2026.
-- Como o mercado muda com o tempo, os valores podem ser editados pelo site ou diretamente em `data/library-games.json`.

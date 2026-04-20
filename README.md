@@ -60,8 +60,3 @@ Collection photo gallery with upload, zoom, and delete actions:
 3. The key is saved only in `.local/openai-key.json` and is not committed to Git.
 4. Click `Add by photo` and select an image containing one or more games.
 5. The server uses the photo plus web search to suggest each game's title, platform, genre, year, average price, and official cover image.
-
-## Price Notes
-
-- Initial average prices were estimated from Brazilian marketplace research, especially Mercado Livre, around April 2026.
-- Market prices change over time, so values can be edited manually in the site or directly in `data/library-games.json`.
