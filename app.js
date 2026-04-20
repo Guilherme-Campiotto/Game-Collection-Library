@@ -49,6 +49,11 @@
       libraryTitle: "Jogos cadastrados",
       switchToTable: "Trocar para tabela",
       switchToCards: "Trocar para cards",
+      bulkEdit: "Editar em massa",
+      bulkSave: "Salvar tudo",
+      bulkCancel: "Cancelar",
+      bulkImageUpload: (title) => `Trocar imagem de ${title}`,
+      bulkNoActions: "Edição em massa",
       tableTitle: "Jogo",
       tablePlatform: "Plataforma",
       tableGenre: "Gênero",
@@ -109,6 +114,9 @@
       toastAddSuccess: (title) => `"${title}" cadastrado com sucesso.`,
       toastEditSuccess: (title) => `"${title}" atualizado com sucesso.`,
       toastDeleteSuccess: (title) => `"${title}" excluido com sucesso.`,
+      toastBulkEditSuccess: (count) =>
+        count === 1 ? "1 jogo atualizado com sucesso." : `${count} jogos atualizados com sucesso.`,
+      toastBulkEditEmpty: "Nenhum jogo visível para editar.",
       toastGenericError: "Algo deu errado. Tente novamente.",
       toastReadError: "Não foi possível ler o arquivo selecionado.",
       toastImageTooLarge: "A imagem excede o limite de 2 MB.",
@@ -173,6 +181,11 @@
       libraryTitle: "Registered games",
       switchToTable: "Switch to table",
       switchToCards: "Switch to cards",
+      bulkEdit: "Bulk edit",
+      bulkSave: "Save all",
+      bulkCancel: "Cancel",
+      bulkImageUpload: (title) => `Change image for ${title}`,
+      bulkNoActions: "Bulk editing",
       tableTitle: "Game",
       tablePlatform: "Platform",
       tableGenre: "Genre",
@@ -233,6 +246,9 @@
       toastAddSuccess: (title) => `"${title}" added successfully.`,
       toastEditSuccess: (title) => `"${title}" updated successfully.`,
       toastDeleteSuccess: (title) => `"${title}" deleted successfully.`,
+      toastBulkEditSuccess: (count) =>
+        count === 1 ? "1 game updated successfully." : `${count} games updated successfully.`,
+      toastBulkEditEmpty: "There are no visible games to edit.",
       toastGenericError: "Something went wrong. Please try again.",
       toastReadError: "The selected file could not be read.",
       toastImageTooLarge: "The image exceeds the 2 MB limit.",
@@ -262,8 +278,11 @@
   const elements = {
     html: document.documentElement,
     statsGrid: document.getElementById("stats-grid"),
+    collectionPanel: document.querySelector(".collection-panel"),
     resultsCount: document.getElementById("results-count"),
     gamesGrid: document.getElementById("games-grid"),
+    tableScrollTop: document.getElementById("games-table-scroll-top"),
+    tableScrollSpacer: document.getElementById("games-table-scroll-spacer"),
     tableWrap: document.getElementById("games-table-wrap"),
     tableBody: document.getElementById("games-table-body"),
     template: document.getElementById("game-card-template"),
@@ -279,6 +298,12 @@
     exportButton: document.getElementById("export-json"),
     importInput: document.getElementById("import-json"),
     toggleView: document.getElementById("toggle-view"),
+    bulkEditTable: document.getElementById("bulk-edit-table"),
+    bulkSaveTable: document.getElementById("bulk-save-table"),
+    bulkCancelTable: document.getElementById("bulk-cancel-table"),
+    bulkActionFooter: document.getElementById("bulk-action-footer"),
+    bulkSaveTableBottom: document.getElementById("bulk-save-table-bottom"),
+    bulkCancelTableBottom: document.getElementById("bulk-cancel-table-bottom"),
     scrollToForm: document.getElementById("scroll-to-form"),
     identifyByPhoto: document.getElementById("identify-by-photo"),
     identifyPhotoInput: document.getElementById("identify-photo-input"),
@@ -338,6 +363,9 @@
   let currentLanguage = localStorage.getItem(LANGUAGE_KEY) || "pt-BR";
   let activeToastTimeouts = [];
   let isIdentifyingPhoto = false;
+  let isBulkEditing = false;
+  let isSyncingTableScroll = false;
+  const bulkImageFiles = new Map();
 
   function t() {
     return translations[currentLanguage] || translations["pt-BR"];
@@ -583,6 +611,11 @@
     elements.importLabelText.textContent = t().importJson;
     elements.libraryEyebrow.textContent = t().libraryEyebrow;
     elements.libraryTitle.textContent = t().libraryTitle;
+    elements.bulkEditTable.textContent = t().bulkEdit;
+    elements.bulkSaveTable.textContent = t().bulkSave;
+    elements.bulkCancelTable.textContent = t().bulkCancel;
+    elements.bulkSaveTableBottom.textContent = t().bulkSave;
+    elements.bulkCancelTableBottom.textContent = t().bulkCancel;
     elements.formEyebrow.textContent = t().formEyebrow;
     elements.formTitle.textContent = t().formTitle;
 
@@ -732,6 +765,116 @@
     return wrapper;
   }
 
+  function createBulkTextInput(id, field, value, inputType = "text") {
+    const input = document.createElement("input");
+    input.className = "table-edit-input";
+    input.dataset.id = id;
+    input.dataset.field = field;
+    input.type = inputType;
+    input.value = value ?? "";
+
+    if (inputType === "number") {
+      input.min = field === "releaseYear" ? "1980" : "0";
+      input.max = field === "releaseYear" ? "2035" : "";
+      input.step = "1";
+    }
+
+    return input;
+  }
+
+  function createBulkStatusSelect(game) {
+    const select = document.createElement("select");
+    select.className = "table-edit-input";
+    select.dataset.id = game.id;
+    select.dataset.field = "status";
+
+    const statuses = [...new Set(["Na fila", "Jogando", "Finalizado", game.status].filter(Boolean))];
+    statuses.forEach((status) => {
+      const option = document.createElement("option");
+      option.value = status;
+      option.textContent = translateStatus(status);
+      select.appendChild(option);
+    });
+
+    select.value = game.status;
+    return select;
+  }
+
+  function createBulkImageEditor(game) {
+    const wrapper = document.createElement("div");
+    wrapper.className = "bulk-photo-editor";
+
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "bulk-photo-button";
+    button.setAttribute("aria-label", t().bulkImageUpload(game.title));
+
+    const image = document.createElement("img");
+    image.className = "mini-photo";
+    image.src = game.image;
+    image.alt = t().imageCurrent(game.title);
+
+    const hint = document.createElement("span");
+    hint.textContent = t().tablePhoto;
+
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "image/png,image/jpeg,image/webp";
+    input.className = "hidden";
+    input.dataset.id = game.id;
+
+    button.append(image, hint);
+    button.addEventListener("click", () => input.click());
+    input.addEventListener("change", () => {
+      const file = input.files[0];
+      if (!file) {
+        return;
+      }
+
+      if (file.size > MAX_IMAGE_SIZE_BYTES) {
+        input.value = "";
+        showToast("error", t().toastImageTooLarge);
+        return;
+      }
+
+      bulkImageFiles.set(game.id, file);
+      image.src = URL.createObjectURL(file);
+      hint.textContent = file.name;
+    });
+
+    wrapper.append(button, input);
+    return wrapper;
+  }
+
+  function createBulkCell(content) {
+    const cell = document.createElement("td");
+    cell.appendChild(content);
+    return cell;
+  }
+
+  function renderBulkEditRow(game) {
+    const row = document.createElement("tr");
+    row.dataset.id = game.id;
+    row.className = "bulk-edit-row";
+
+    row.append(
+      createBulkCell(createBulkTextInput(game.id, "title", game.title)),
+      createBulkCell(createBulkTextInput(game.id, "platform", game.platform)),
+      createBulkCell(createBulkTextInput(game.id, "genre", game.genre)),
+      createBulkCell(createBulkTextInput(game.id, "releaseYear", game.releaseYear, "number")),
+      createBulkCell(createBulkTextInput(game.id, "averagePriceBrl", game.averagePriceBrl, "number")),
+      createBulkCell(createBulkStatusSelect(game)),
+      createBulkCell(createBulkImageEditor(game))
+    );
+
+    const actionsCell = document.createElement("td");
+    actionsCell.className = "bulk-edit-note";
+    actionsCell.textContent = t().bulkNoActions;
+    row.appendChild(actionsCell);
+
+    return row;
+  }
+
   function renderCards(collection) {
     elements.gamesGrid.innerHTML = "";
 
@@ -794,6 +937,11 @@
     elements.tableBody.innerHTML = "";
 
     collection.forEach((game) => {
+      if (isBulkEditing) {
+        elements.tableBody.appendChild(renderBulkEditRow(game));
+        return;
+      }
+
       const row = document.createElement("tr");
       row.innerHTML = `
         <td>${escapeHtml(game.title)}</td>
@@ -820,14 +968,44 @@
     const totalValue = filtered.reduce((sum, game) => sum + Number(game.averagePriceBrl || 0), 0);
     elements.resultsCount.textContent = t().resultsCount(filtered.length, currency(totalValue));
     updateView();
+    updateTableScrollSpacer();
   }
 
   function updateView() {
     const isGrid = viewMode === "grid";
     elements.gamesGrid.classList.toggle("hidden", !isGrid);
+    elements.tableScrollTop.classList.toggle("hidden", isGrid);
+    elements.tableScrollTop.classList.toggle("is-bulk-editing", isBulkEditing);
     elements.tableWrap.classList.toggle("hidden", isGrid);
+    elements.tableWrap.classList.toggle("is-bulk-editing", isBulkEditing);
     elements.toggleView.textContent = isGrid ? t().switchToTable : t().switchToCards;
+    elements.bulkEditTable.classList.toggle("hidden", isGrid || isBulkEditing);
+    elements.bulkSaveTable.classList.toggle("hidden", isGrid || !isBulkEditing);
+    elements.bulkCancelTable.classList.toggle("hidden", isGrid || !isBulkEditing);
+    elements.bulkActionFooter.classList.toggle("hidden", isGrid || !isBulkEditing);
     localStorage.setItem(VIEW_KEY, viewMode);
+  }
+
+  function updateTableScrollSpacer() {
+    const table = elements.tableWrap.querySelector(".games-table");
+    if (!table) {
+      return;
+    }
+
+    elements.tableScrollSpacer.style.width = `${table.scrollWidth}px`;
+    elements.tableScrollTop.scrollLeft = elements.tableWrap.scrollLeft;
+  }
+
+  function syncTableScroll(source, target) {
+    if (isSyncingTableScroll) {
+      return;
+    }
+
+    isSyncingTableScroll = true;
+    target.scrollLeft = source.scrollLeft;
+    requestAnimationFrame(() => {
+      isSyncingTableScroll = false;
+    });
   }
 
   function fileToDataUrl(file) {
@@ -1074,6 +1252,131 @@
     render();
   }
 
+  function startBulkEdit() {
+    const visibleGames = filterGames();
+    if (!visibleGames.length) {
+      showToast("error", t().toastBulkEditEmpty);
+      return;
+    }
+
+    viewMode = "table";
+    isBulkEditing = true;
+    bulkImageFiles.clear();
+    render();
+  }
+
+  function scrollCollectionToTop() {
+    elements.collectionPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function cancelBulkEdit(options = {}) {
+    isBulkEditing = false;
+    bulkImageFiles.clear();
+    render();
+
+    if (options.scrollToTop) {
+      scrollCollectionToTop();
+    }
+  }
+
+  function readBulkRow(row) {
+    const id = row.dataset.id;
+    const current = findGame(id);
+    if (!current) {
+      return null;
+    }
+
+    const fields = {};
+    row.querySelectorAll("[data-field]").forEach((input) => {
+      const value = input.value.trim();
+      fields[input.dataset.field] = value;
+    });
+
+    return {
+      ...current,
+      title: fields.title || current.title,
+      platform: fields.platform || current.platform,
+      genre: fields.genre || current.genre,
+      releaseYear: Number(fields.releaseYear) || current.releaseYear,
+      averagePriceBrl: Number(fields.averagePriceBrl) || 0,
+      status: fields.status || current.status
+    };
+  }
+
+  function hasBulkChanges(current, edited, photoFile) {
+    return (
+      Boolean(photoFile) ||
+      current.title !== edited.title ||
+      current.platform !== edited.platform ||
+      current.genre !== edited.genre ||
+      Number(current.releaseYear) !== Number(edited.releaseYear) ||
+      Number(current.averagePriceBrl) !== Number(edited.averagePriceBrl) ||
+      current.status !== edited.status
+    );
+  }
+
+  function setBulkActionButtonsDisabled(disabled) {
+    [
+      elements.bulkSaveTable,
+      elements.bulkCancelTable,
+      elements.bulkSaveTableBottom,
+      elements.bulkCancelTableBottom
+    ].forEach((button) => {
+      button.disabled = disabled;
+    });
+  }
+
+  async function saveBulkEdit(options = {}) {
+    const rows = [...elements.tableBody.querySelectorAll("tr[data-id]")];
+    if (!rows.length) {
+      showToast("error", t().toastBulkEditEmpty);
+      return;
+    }
+
+    setBulkActionButtonsDisabled(true);
+
+    try {
+      const editedGames = new Map();
+
+      for (const row of rows) {
+        const edited = readBulkRow(row);
+        if (!edited) {
+          continue;
+        }
+
+        const current = findGame(edited.id);
+        const photoFile = bulkImageFiles.get(edited.id);
+        if (!current || !hasBulkChanges(current, edited, photoFile)) {
+          continue;
+        }
+
+        if (photoFile) {
+          edited.image = await uploadCover(photoFile, edited.title, edited.platform);
+        }
+
+        editedGames.set(edited.id, edited);
+      }
+
+      games = games.map((game) => editedGames.get(game.id) || game);
+      await persistGames();
+      isBulkEditing = false;
+      bulkImageFiles.clear();
+      refreshFilterOptions();
+      updateStaticTexts();
+      render();
+      showToast("success", t().toastBulkEditSuccess(editedGames.size));
+
+      if (options.scrollToTop) {
+        scrollCollectionToTop();
+      }
+    } catch (error) {
+      console.error(error);
+      showToast("error", error.message || t().toastGenericError);
+    } finally {
+      setBulkActionButtonsDisabled(false);
+    }
+  }
+
   async function deleteGame(id) {
     const game = findGame(id);
     if (!game) {
@@ -1173,8 +1476,20 @@
     elements.clearFilters.addEventListener("click", clearFilters);
     elements.toggleView.addEventListener("click", () => {
       viewMode = viewMode === "grid" ? "table" : "grid";
+      if (viewMode === "grid") {
+        isBulkEditing = false;
+        bulkImageFiles.clear();
+      }
       updateView();
     });
+    elements.bulkEditTable.addEventListener("click", startBulkEdit);
+    elements.bulkSaveTable.addEventListener("click", saveBulkEdit);
+    elements.bulkCancelTable.addEventListener("click", cancelBulkEdit);
+    elements.bulkSaveTableBottom.addEventListener("click", () => saveBulkEdit({ scrollToTop: true }));
+    elements.bulkCancelTableBottom.addEventListener("click", () => cancelBulkEdit({ scrollToTop: true }));
+    elements.tableScrollTop.addEventListener("scroll", () => syncTableScroll(elements.tableScrollTop, elements.tableWrap));
+    elements.tableWrap.addEventListener("scroll", () => syncTableScroll(elements.tableWrap, elements.tableScrollTop));
+    window.addEventListener("resize", updateTableScrollSpacer);
     elements.scrollToForm.addEventListener("click", () => {
       elements.formPanel.scrollIntoView({ behavior: "smooth", block: "start" });
     });

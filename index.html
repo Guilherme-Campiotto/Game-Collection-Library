@@ -110,10 +110,19 @@
 
         <div class="results-meta">
           <p id="results-count"></p>
-          <button class="secondary" id="toggle-view" type="button">Trocar para tabela</button>
+          <div class="table-action-bar">
+            <button class="secondary" id="toggle-view" type="button">Trocar para tabela</button>
+            <button class="secondary hidden" id="bulk-edit-table" type="button">Editar em massa</button>
+            <button class="primary hidden" id="bulk-save-table" type="button">Salvar tudo</button>
+            <button class="secondary hidden" id="bulk-cancel-table" type="button">Cancelar</button>
+          </div>
         </div>
 
         <div id="games-grid" class="games-grid" aria-live="polite"></div>
+
+        <div class="table-scroll-top hidden" id="games-table-scroll-top" aria-hidden="true">
+          <div id="games-table-scroll-spacer"></div>
+        </div>
 
         <div class="table-wrap hidden" id="games-table-wrap">
           <table class="games-table">
@@ -131,6 +140,11 @@
             </thead>
             <tbody id="games-table-body"></tbody>
           </table>
+        </div>
+
+        <div class="bulk-action-footer hidden" id="bulk-action-footer">
+          <button class="primary" id="bulk-save-table-bottom" type="button">Salvar tudo</button>
+          <button class="secondary" id="bulk-cancel-table-bottom" type="button">Cancelar</button>
         </div>
       </section>
 

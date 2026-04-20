@@ -448,6 +448,13 @@ textarea {
   margin-top: 14px;
 }
 
+.table-action-bar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
 .action-button {
   padding: 10px 14px;
   font-size: 0.9rem;
@@ -464,8 +471,44 @@ textarea {
   line-height: 1.5;
 }
 
+.collection-panel {
+  overflow: hidden;
+}
+
+.table-scroll-top,
 .table-wrap {
+  width: 100%;
+  max-width: 100%;
   overflow-x: auto;
+  overscroll-behavior-x: contain;
+}
+
+.table-scroll-top {
+  height: 18px;
+  margin: 10px 0 8px;
+  overflow-y: hidden;
+}
+
+.table-scroll-top > div {
+  height: 1px;
+}
+
+.table-wrap {
+  border-radius: 18px;
+}
+
+.table-scroll-top.is-bulk-editing,
+.table-wrap.is-bulk-editing {
+  margin-inline: -10px;
+  padding-inline: 10px;
+}
+
+.bulk-action-footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 18px;
 }
 
 .rare-hero {
@@ -690,7 +733,13 @@ textarea {
 
 .games-table {
   width: 100%;
-  border-collapse: collapse;
+  min-width: 920px;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.table-wrap.is-bulk-editing .games-table {
+  min-width: 1180px;
 }
 
 .games-table th,
@@ -698,6 +747,7 @@ textarea {
   padding: 14px 12px;
   text-align: left;
   border-bottom: 1px solid rgba(62, 49, 29, 0.1);
+  background: rgba(255, 250, 242, 0.96);
 }
 
 .games-table th {
@@ -705,6 +755,25 @@ textarea {
   font-size: 0.82rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
+  background: rgba(255, 250, 242, 0.98);
+}
+
+.games-table th:first-child,
+.games-table td:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  min-width: 230px;
+  max-width: 280px;
+  box-shadow: 12px 0 18px rgba(44, 31, 16, 0.08);
+}
+
+.games-table th:first-child {
+  z-index: 3;
+}
+
+.games-table td:first-child {
+  font-weight: 700;
 }
 
 .mini-photo {
@@ -714,7 +783,56 @@ textarea {
   border-radius: 10px;
 }
 
+.table-edit-input {
+  width: min(190px, 34vw);
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(62, 49, 29, 0.16);
+  background: rgba(255, 255, 255, 0.82);
+  color: var(--ink);
+  font: inherit;
+}
+
+.bulk-edit-row td {
+  vertical-align: middle;
+}
+
+.bulk-photo-editor {
+  display: flex;
+}
+
+.bulk-photo-button {
+  display: grid;
+  grid-template-columns: auto minmax(72px, 1fr);
+  align-items: center;
+  gap: 8px;
+  width: 170px;
+  padding: 6px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.78);
+  color: var(--ink);
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-align: left;
+}
+
+.bulk-photo-button span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bulk-edit-note {
+  color: var(--muted);
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
 .hidden {
+  display: none;
+}
+
+.bulk-action-footer.hidden {
   display: none;
 }
 
