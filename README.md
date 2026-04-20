@@ -1,54 +1,67 @@
-# Game Collection
+# Game Collection Library
 
-Catálogo pessoal para organizar a coleção de jogos em uma interface simples, bonita e sem banco de dados.
+[Português do Brasil](README.pt-BR.md)
+
+A personal catalog for organizing a video game collection with a clean web interface, local project storage, image uploads, filtering, rarity views, and optional AI-assisted photo registration.
 
 ## Preview
 
-Tela inicial com painel, resumo da coleção e filtros:
+Library dashboard with search, filters, collection stats, and quick actions:
 
-![Tela inicial do site](docs/site-home.png)
+![Game Collection Library dashboard](docs/site-library-overview-en.png)
 
-Área da biblioteca com cards, preço médio e ações de editar ou excluir:
+Rarest games page with a top 3 highlight and a price-sorted list:
 
-![Biblioteca de jogos no site](docs/site-library.png)
+![Rarest games page](docs/site-rarest-games-en.png)
 
-## O que o site faz
+Collection photo gallery with upload, zoom, and delete actions:
 
-- Mostra um painel com jogos da coleção cadastrados em `data/library-games.json`.
-- Permite buscar, filtrar e ordenar por plataforma, gênero, status, ano e preço médio.
-- Traz um formulário para cadastrar novos itens direto no navegador.
-- Permite cadastrar um jogo a partir de uma foto usando IA com busca web.
-- Quando aberto com o servidor local em `npm start`, salva a coleção em `data/library-games.json` e as novas capas em `assets/covers/`.
-- Tem uma página de galeria para guardar fotos da coleção em `assets/gallery/`, com upload, zoom e exclusão.
-- Permite exportar e importar os dados em JSON.
+![Collection photo gallery](docs/site-collection-gallery-en.png)
 
-## Arquivos principais
+## Features
 
-- `index.html`: estrutura do site
-- `styles.css`: visual da interface
-- `app.js`: lógica de filtros, cadastro, persistência e exportação
-- `gallery.html` e `gallery.js`: galeria de fotos da coleção
-- `server.js`: servidor local para salvar coleção e uploads dentro do projeto
-- `data/library-games.json`: fonte única dos jogos cadastrados na coleção
+- Loads the collection from `data/library-games.json`, keeping the project simple and database-free.
+- Lets you search, filter, and sort by platform, genre, status, release year, and average price.
+- Supports manual game registration, editing, deletion, and bulk table editing.
+- Saves new cover uploads inside `assets/covers/` when running through the local server.
+- Includes an AI-assisted photo registration flow that can identify one or more games in the same image.
+- Uses a local OpenAI API key file at `.local/openai-key.json`, which is ignored by Git.
+- Provides a rarity page ordered by estimated market price.
+- Provides a collection gallery stored in `assets/gallery/`, with upload, lightbox zoom, and delete confirmation.
+- Supports Portuguese and English in the site UI.
+- Exports and imports the collection as JSON.
 
-## Como usar
+## Main Files
 
-1. Na pasta do projeto, rode `npm start`.
-2. Abra `http://127.0.0.1:3000` no navegador.
-3. Use o formulário para adicionar ou editar jogos.
-4. Quando enviar uma capa nova, o arquivo será salvo em `assets/covers/`.
-5. Use a página `Fotos da coleção` para enviar, ampliar ou excluir fotos da galeria.
-6. As alterações da coleção ficam persistidas em `data/library-games.json`.
+- `index.html`: main library page structure.
+- `styles.css`: visual design and responsive layout.
+- `app.js`: library UI, filters, persistence, bulk editing, AI import, and JSON import/export.
+- `rare.html` and `rare.js`: rarest games page.
+- `gallery.html` and `gallery.js`: collection photo gallery.
+- `server.js`: local server used to persist collection data and uploads inside the project.
+- `server/storage.js`: file storage helpers for collection, covers, and gallery photos.
+- `server/ai.js`: OpenAI integration for photo-based game registration.
+- `data/library-games.json`: single source of truth for registered games.
 
-## Cadastro por foto com IA
+## How To Run
 
-1. Clique em `Configurar IA`.
-2. Cole sua API key da OpenAI.
-3. A chave será salva apenas localmente em `.local/openai-key.json`, que é ignorado pelo Git.
-4. Clique em `Cadastrar por foto` e selecione uma imagem com um ou mais jogos.
-5. O servidor usa a foto e busca web para sugerir título, plataforma, gênero, ano, preço médio e capa oficial de cada jogo identificado.
+1. Run `npm start` from the project folder.
+2. Open `http://127.0.0.1:3000` in your browser.
+3. Use the form to add or edit games.
+4. Use table mode and `Bulk edit` to update multiple visible games at once.
+5. Uploading a new cover saves the file in `assets/covers/`.
+6. Use the `Collection photos` page to upload, enlarge, or delete gallery photos.
+7. Collection changes are persisted in `data/library-games.json`.
 
-## Observações sobre os preços
+## AI Photo Registration
 
-- Os preços médios iniciais foram estimados com base em pesquisas no Mercado Livre em abril de 2026.
-- Como o mercado muda, você pode editar a base exportando o JSON, ajustando os valores e importando novamente.
+1. Click `Configure AI`.
+2. Paste your OpenAI API key.
+3. The key is saved only in `.local/openai-key.json` and is not committed to Git.
+4. Click `Add by photo` and select an image containing one or more games.
+5. The server uses the photo plus web search to suggest each game's title, platform, genre, year, average price, and official cover image.
+
+## Price Notes
+
+- Initial average prices were estimated from Brazilian marketplace research, especially Mercado Livre, around April 2026.
+- Market prices change over time, so values can be edited manually in the site or directly in `data/library-games.json`.

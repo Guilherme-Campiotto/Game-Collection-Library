@@ -23,7 +23,7 @@
       heroGalleryAlt1: "Estante com jogos de PS4",
       heroGalleryAlt2: "Estante com jogos de PS3",
       heroGalleryAlt3: "Outra estante com jogos de PS4",
-      addNewGame: "Cadastrar novo jogo",
+      addNewGame: "Cadastrar jogo",
       addByPhoto: "Cadastrar por foto",
       configureAiKey: "Configurar IA",
       exportJson: "Exportar JSON",
