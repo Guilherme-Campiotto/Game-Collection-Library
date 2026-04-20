@@ -161,6 +161,7 @@ h2 {
   flex-wrap: wrap;
   gap: 12px;
   align-items: center;
+  padding-top: 10px;
 }
 
 .hero-actions {
@@ -518,13 +519,15 @@ textarea {
 
 .rare-podium {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 18px;
 }
 
 .podium-card {
   position: relative;
   overflow: hidden;
+  width: 100%;
+  min-width: 0;
   min-height: 360px;
   padding: 18px;
   border-radius: 24px;
@@ -582,6 +585,7 @@ textarea {
   margin-top: 8px;
   font-size: clamp(1.8rem, 2.6vw, 2.6rem);
   line-height: 1;
+  overflow-wrap: anywhere;
 }
 
 .podium-meta {
@@ -623,6 +627,21 @@ textarea {
 
 .rare-games-table tbody tr:nth-child(odd) {
   background: rgba(255, 255, 255, 0.52);
+}
+
+.rare-table-panel {
+  overflow: hidden;
+}
+
+.rare-games-table th:first-child,
+.rare-games-table td:first-child {
+  min-width: 84px;
+  max-width: 100px;
+}
+
+.rare-games-table th:nth-child(2),
+.rare-games-table td:nth-child(2) {
+  min-width: 230px;
 }
 
 .gallery-hero {
@@ -948,6 +967,32 @@ textarea {
     border-radius: 22px;
   }
 
+  .hero-copy {
+    min-width: 0;
+  }
+
+  h1 {
+    font-size: clamp(2rem, 10vw, 2.7rem);
+    line-height: 1.05;
+    overflow-wrap: anywhere;
+  }
+
+  h2 {
+    font-size: clamp(1.45rem, 7vw, 2rem);
+    overflow-wrap: anywhere;
+  }
+
+  .site-nav-link {
+    padding: 9px 12px;
+    font-size: 0.92rem;
+  }
+
+  .hero-text {
+    font-size: 0.98rem;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+  }
+
   .hero-gallery,
   .stats-grid,
   .controls-grid,
@@ -963,7 +1008,83 @@ textarea {
   }
 
   .podium-card {
-    min-height: 320px;
+    min-height: 280px;
+    padding: 16px;
+  }
+
+  .podium-title {
+    font-size: clamp(1.45rem, 10vw, 2rem);
+  }
+
+  .podium-price {
+    font-size: 1.6rem;
+  }
+
+  .rare-table-panel .table-wrap {
+    overflow-x: visible;
+    border-radius: 0;
+  }
+
+  .rare-games-table {
+    min-width: 0;
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 12px;
+  }
+
+  .rare-games-table thead {
+    display: none;
+  }
+
+  .rare-games-table tbody,
+  .rare-games-table tr,
+  .rare-games-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .rare-games-table tr {
+    overflow: hidden;
+    border: 1px solid rgba(62, 49, 29, 0.1);
+    border-radius: 18px;
+    background: rgba(255, 250, 242, 0.96);
+  }
+
+  .rare-games-table tbody tr:nth-child(odd) {
+    background: rgba(255, 250, 242, 0.96);
+  }
+
+  .rare-games-table th:first-child,
+  .rare-games-table td:first-child,
+  .rare-games-table th:nth-child(2),
+  .rare-games-table td:nth-child(2) {
+    position: static;
+    min-width: 0;
+    max-width: none;
+    box-shadow: none;
+  }
+
+  .rare-games-table td {
+    display: grid;
+    grid-template-columns: minmax(92px, 38%) minmax(0, 1fr);
+    gap: 12px;
+    align-items: start;
+    padding: 12px 14px;
+    border-bottom: 1px solid rgba(62, 49, 29, 0.08);
+    overflow-wrap: anywhere;
+  }
+
+  .rare-games-table td:last-child {
+    border-bottom: 0;
+  }
+
+  .rare-games-table td::before {
+    content: attr(data-label);
+    color: var(--muted);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
   }
 
   .game-meta {

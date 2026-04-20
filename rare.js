@@ -185,14 +185,22 @@
 
     otherGames.forEach((game, index) => {
       const row = document.createElement("tr");
-      row.innerHTML = `
-        <td>${escapeHtml(String(index + 4))}</td>
-        <td>${escapeHtml(game.title)}</td>
-        <td>${escapeHtml(game.platform)}</td>
-        <td>${escapeHtml(game.genre)}</td>
-        <td>${escapeHtml(String(game.releaseYear))}</td>
-        <td>${escapeHtml(currency(game.averagePriceBrl))}</td>
-      `;
+      const cells = [
+        { label: t().tableRank, value: String(index + 4) },
+        { label: t().tableGame, value: game.title },
+        { label: t().tablePlatform, value: game.platform },
+        { label: t().tableGenre, value: game.genre },
+        { label: t().tableYear, value: String(game.releaseYear) },
+        { label: t().tablePrice, value: currency(game.averagePriceBrl) }
+      ];
+
+      cells.forEach((cell) => {
+        const tableCell = document.createElement("td");
+        tableCell.dataset.label = cell.label;
+        tableCell.textContent = cell.value;
+        row.appendChild(tableCell);
+      });
+
       elements.tableBody.appendChild(row);
     });
   }
