@@ -118,6 +118,7 @@
       toastIdentifySuccess: (count) =>
         count === 1 ? "1 jogo cadastrado pela foto." : `${count} jogos cadastrados pela foto.`,
       toastIdentifyError: "Não foi possível cadastrar o jogo pela foto.",
+      toastClose: "Fechar",
       identifyPhotoLoading: "Analisando foto...",
       aiKeyPrompt:
         "Cole sua API key da OpenAI. Ela será salva apenas neste projeto, em .local/openai-key.json, e não será enviada ao Git.",
@@ -241,6 +242,7 @@
       toastIdentifySuccess: (count) =>
         count === 1 ? "1 game added from the photo." : `${count} games added from the photo.`,
       toastIdentifyError: "The game could not be added from the photo.",
+      toastClose: "Close",
       identifyPhotoLoading: "Analyzing photo...",
       aiKeyPrompt:
         "Paste your OpenAI API key. It will be saved only in this project, under .local/openai-key.json, and will not be committed to Git.",
@@ -408,17 +410,32 @@
     }
 
     const duration = options.duration ?? 2000;
+    const persistent = Boolean(options.persistent);
 
     clearToastTimers();
     elements.toastContainer.innerHTML = "";
 
     const toast = document.createElement("div");
-    toast.className = `toast ${type}`;
+    toast.className = `toast ${type}${persistent ? " persistent" : ""}`;
     toast.setAttribute("role", type === "error" ? "alert" : "status");
-    toast.textContent = message;
+
+    const messageElement = document.createElement("span");
+    messageElement.textContent = message;
+    toast.appendChild(messageElement);
+
+    if (persistent) {
+      const closeButton = document.createElement("button");
+      closeButton.type = "button";
+      closeButton.className = "toast-close";
+      closeButton.setAttribute("aria-label", t().toastClose);
+      closeButton.textContent = "×";
+      closeButton.addEventListener("click", () => toast.remove());
+      toast.appendChild(closeButton);
+    }
+
     elements.toastContainer.appendChild(toast);
 
-    if (duration === null) {
+    if (persistent || duration === null) {
       return;
     }
 
@@ -918,7 +935,7 @@
       clearForm();
       updateStaticTexts();
       render();
-      showToast("success", t().toastIdentifySuccess(identifiedGames.length));
+      showToast("success", t().toastIdentifySuccess(identifiedGames.length), { persistent: true });
     } finally {
       setIdentifyPhotoLoading(false);
     }
@@ -1137,7 +1154,7 @@
 
       identifyGameByPhoto(file).catch((error) => {
         console.error(error);
-        showToast("error", error.message || t().toastIdentifyError);
+        showToast("error", error.message || t().toastIdentifyError, { persistent: true });
       });
     });
     elements.configureAiKey.addEventListener("click", () => {

@@ -61,8 +61,30 @@ function saveImageDataUrl(repoRoot, targetDir, { fileName, dataUrl }) {
   return relativePath.replaceAll("\\", "/");
 }
 
+function saveImageBuffer(repoRoot, targetDir, { fileName, mimeType, buffer }) {
+  const normalizedMimeType = String(mimeType || "").split(";")[0].trim().toLowerCase();
+  if (!["image/png", "image/jpeg", "image/webp"].includes(normalizedMimeType)) {
+    throw new Error("Unsupported image format.");
+  }
+
+  const extension = normalizedMimeType === "image/png" ? "png" : normalizedMimeType === "image/webp" ? "webp" : "jpg";
+  const safeName = slugify(fileName) || "cover";
+  const targetName = `${safeName}-${Date.now()}.${extension}`;
+  const relativePath = path.join(targetDir, targetName);
+  const absolutePath = path.join(repoRoot, relativePath);
+
+  fs.mkdirSync(path.dirname(absolutePath), { recursive: true });
+  fs.writeFileSync(absolutePath, buffer);
+
+  return relativePath.replaceAll("\\", "/");
+}
+
 function saveUploadedCover(repoRoot, payload) {
   return saveImageDataUrl(repoRoot, COVERS_DIR, payload);
+}
+
+function saveDownloadedCover(repoRoot, payload) {
+  return saveImageBuffer(repoRoot, COVERS_DIR, payload);
 }
 
 function saveGalleryPhoto(repoRoot, payload) {
@@ -201,6 +223,7 @@ module.exports = {
   loadCollection,
   saveCollection,
   saveUploadedCover,
+  saveDownloadedCover,
   saveGalleryPhoto,
   listGalleryPhotos,
   deleteGalleryPhoto,

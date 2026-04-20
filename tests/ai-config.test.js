@@ -3,7 +3,7 @@ const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const os = require("node:os");
 const path = require("node:path");
-const { hasOpenAiKey, normalizeIdentifiedGames, saveOpenAiKey } = require("../server/ai");
+const { getRateLimitRetryDelay, hasOpenAiKey, normalizeIdentifiedGames, saveOpenAiKey } = require("../server/ai");
 
 test("OpenAI key is saved in local config outside source files", () => {
   const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "gcl-ai-"));
@@ -32,7 +32,8 @@ test("AI photo identification can normalize multiple games", () => {
         platform: "PS5",
         genre: "RPG",
         releaseYear: 2024,
-        averagePriceBrl: 240
+        averagePriceBrl: 240,
+        coverImageUrl: "https://example.com/final-fantasy-vii-rebirth-ps5.jpg"
       },
       {
         title: "Super Mario Odyssey",
@@ -46,6 +47,7 @@ test("AI photo identification can normalize multiple games", () => {
 
   assert.equal(games.length, 2);
   assert.equal(games[0].title, "Final Fantasy VII Rebirth");
+  assert.equal(games[0].coverImageUrl, "https://example.com/final-fantasy-vii-rebirth-ps5.jpg");
   assert.equal(games[1].title, "Super Mario Odyssey");
   assert.notEqual(games[0].id, games[1].id);
 });
@@ -61,4 +63,34 @@ test("AI photo identification still accepts a single-game response", () => {
 
   assert.equal(games.length, 1);
   assert.equal(games[0].title, "Dead Space");
+});
+
+test("rate limit retry delay uses the retry time from the OpenAI error message", () => {
+  const delay = getRateLimitRetryDelay(
+    {
+      error: {
+        message: "Rate limit reached. Please try again in 6.113s."
+      }
+    },
+    {
+      headers: new Map()
+    }
+  );
+
+  assert.equal(delay, 6113);
+});
+
+test("rate limit retry delay prefers retry-after headers", () => {
+  const delay = getRateLimitRetryDelay(
+    {
+      error: {
+        message: "Please try again in 6.113s."
+      }
+    },
+    {
+      headers: new Map([["retry-after", "2"]])
+    }
+  );
+
+  assert.equal(delay, 2000);
 });

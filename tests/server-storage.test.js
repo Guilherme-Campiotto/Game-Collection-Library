@@ -9,6 +9,7 @@ const {
   loadCollection,
   removeUnusedCovers,
   saveCollection,
+  saveDownloadedCover,
   saveGalleryPhoto,
   saveUploadedCover
 } = require("../server/storage");
@@ -32,6 +33,18 @@ test("server storage persists uploaded covers inside assets/covers", () => {
 
   assert.match(imagePath, /^assets\/covers\/switch-zelda-\d+\.png$/);
   assert.ok(fs.existsSync(path.join(tempRoot, imagePath)));
+});
+
+test("server storage persists downloaded cover buffers inside assets/covers", () => {
+  const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "gcl-downloaded-cover-"));
+  const imagePath = saveDownloadedCover(tempRoot, {
+    fileName: "Official Cover",
+    mimeType: "image/jpeg",
+    buffer: Buffer.from("fake image bytes")
+  });
+
+  assert.match(imagePath, /^assets\/covers\/official-cover-\d+\.jpg$/);
+  assert.equal(fs.readFileSync(path.join(tempRoot, imagePath), "utf8"), "fake image bytes");
 });
 
 test("server storage manages gallery photos inside assets/gallery", () => {

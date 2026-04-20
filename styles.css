@@ -740,6 +740,29 @@ textarea {
   animation: toast-in 180ms ease-out forwards, toast-out 220ms ease-in 1.78s forwards;
 }
 
+.toast.persistent {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  animation: toast-in 180ms ease-out forwards;
+  pointer-events: auto;
+}
+
+.toast-close {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border-radius: 50%;
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.62);
+  box-shadow: none;
+}
+
 .toast.success {
   border-color: rgba(15, 109, 98, 0.22);
   background: #eef9f6;
