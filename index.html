@@ -142,6 +142,31 @@
           </table>
         </div>
 
+        <div class="pagination-controls" id="pagination-controls">
+          <label class="pagination-size">
+            <span id="pagination-size-label">Itens por página</span>
+            <select id="pagination-size-select">
+              <option value="6">6</option>
+              <option value="9">9</option>
+              <option value="10">10</option>
+              <option value="12">12</option>
+              <option value="15">15</option>
+              <option value="20">20</option>
+            </select>
+          </label>
+
+          <div class="pagination-pages">
+            <button class="secondary" id="pagination-prev" type="button">Anterior</button>
+            <label class="pagination-page-select">
+              <span id="pagination-page-label">Página</span>
+              <select id="pagination-page-select"></select>
+            </label>
+            <button class="secondary" id="pagination-next" type="button">Próxima</button>
+          </div>
+
+          <p id="pagination-info"></p>
+        </div>
+
         <div class="bulk-action-footer hidden" id="bulk-action-footer">
           <button class="primary" id="bulk-save-table-bottom" type="button">Salvar tudo</button>
           <button class="secondary" id="bulk-cancel-table-bottom" type="button">Cancelar</button>

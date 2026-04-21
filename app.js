@@ -1,7 +1,12 @@
 (function () {
   const VIEW_KEY = "game-collection-library-view-mode";
   const LANGUAGE_KEY = "game-collection-library-language";
+  const CARD_PAGE_SIZE_KEY = "game-collection-library-card-page-size";
+  const TABLE_PAGE_SIZE_KEY = "game-collection-library-table-page-size";
   const MAX_IMAGE_SIZE_BYTES = 2 * 1024 * 1024;
+  const DEFAULT_CARD_PAGE_SIZE = 6;
+  const DEFAULT_TABLE_PAGE_SIZE = 10;
+  const PAGE_SIZE_OPTIONS = [6, 9, 10, 12, 15, 20];
   const COLLECTION_API_URL = "/api/collection";
   const UPLOAD_API_URL = "/api/upload";
   const AI_KEY_API_URL = "/api/ai-key";
@@ -62,6 +67,11 @@
       tableStatus: "Status",
       tablePhoto: "Foto",
       tableActions: "Ações",
+      paginationSizeLabel: "Itens por página",
+      paginationPageLabel: "Página",
+      paginationPrevious: "Anterior",
+      paginationNext: "Próxima",
+      paginationInfo: (page, totalPages) => `Página ${page} de ${totalPages}`,
       formEyebrow: "Cadastro",
       formTitle: "Adicionar ou editar item",
       formModeDefault: "Use o formulário para incluir um novo jogo ou atualizar um item existente.",
@@ -194,6 +204,11 @@
       tableStatus: "Status",
       tablePhoto: "Photo",
       tableActions: "Actions",
+      paginationSizeLabel: "Items per page",
+      paginationPageLabel: "Page",
+      paginationPrevious: "Previous",
+      paginationNext: "Next",
+      paginationInfo: (page, totalPages) => `Page ${page} of ${totalPages}`,
       formEyebrow: "Form",
       formTitle: "Add or edit item",
       formModeDefault: "Use the form to add a new game or update an existing item.",
@@ -304,6 +319,14 @@
     bulkActionFooter: document.getElementById("bulk-action-footer"),
     bulkSaveTableBottom: document.getElementById("bulk-save-table-bottom"),
     bulkCancelTableBottom: document.getElementById("bulk-cancel-table-bottom"),
+    paginationControls: document.getElementById("pagination-controls"),
+    paginationSizeLabel: document.getElementById("pagination-size-label"),
+    paginationSizeSelect: document.getElementById("pagination-size-select"),
+    paginationPrev: document.getElementById("pagination-prev"),
+    paginationNext: document.getElementById("pagination-next"),
+    paginationPageLabel: document.getElementById("pagination-page-label"),
+    paginationPageSelect: document.getElementById("pagination-page-select"),
+    paginationInfo: document.getElementById("pagination-info"),
     scrollToForm: document.getElementById("scroll-to-form"),
     identifyByPhoto: document.getElementById("identify-by-photo"),
     identifyPhotoInput: document.getElementById("identify-photo-input"),
@@ -365,6 +388,18 @@
   let isIdentifyingPhoto = false;
   let isBulkEditing = false;
   let isSyncingTableScroll = false;
+  const currentPage = {
+    grid: 1,
+    table: 1
+  };
+  const pageSize = {
+    grid: PAGE_SIZE_OPTIONS.includes(Number(localStorage.getItem(CARD_PAGE_SIZE_KEY)))
+      ? Number(localStorage.getItem(CARD_PAGE_SIZE_KEY))
+      : DEFAULT_CARD_PAGE_SIZE,
+    table: PAGE_SIZE_OPTIONS.includes(Number(localStorage.getItem(TABLE_PAGE_SIZE_KEY)))
+      ? Number(localStorage.getItem(TABLE_PAGE_SIZE_KEY))
+      : DEFAULT_TABLE_PAGE_SIZE
+  };
   const bulkImageFiles = new Map();
 
   function t() {
@@ -627,6 +662,10 @@
     elements.tableHeadStatus.textContent = t().tableStatus;
     elements.tableHeadPhoto.textContent = t().tablePhoto;
     elements.tableHeadActions.textContent = t().tableActions;
+    elements.paginationSizeLabel.textContent = t().paginationSizeLabel;
+    elements.paginationPageLabel.textContent = t().paginationPageLabel;
+    elements.paginationPrev.textContent = t().paginationPrevious;
+    elements.paginationNext.textContent = t().paginationNext;
 
     elements.formNameLabel.textContent = t().formNameLabel;
     elements.formPlatformLabel.textContent = t().formPlatformLabel;
@@ -711,6 +750,50 @@
     });
 
     return sortGames(filtered, sort);
+  }
+
+  function getActivePageSize() {
+    return pageSize[viewMode] || (viewMode === "table" ? DEFAULT_TABLE_PAGE_SIZE : DEFAULT_CARD_PAGE_SIZE);
+  }
+
+  function getActivePage() {
+    return currentPage[viewMode] || 1;
+  }
+
+  function getPagination(collection) {
+    const size = getActivePageSize();
+    const totalPages = Math.max(1, Math.ceil(collection.length / size));
+    const page = Math.min(Math.max(getActivePage(), 1), totalPages);
+    currentPage[viewMode] = page;
+
+    const start = (page - 1) * size;
+    return {
+      page,
+      size,
+      totalPages,
+      items: collection.slice(start, start + size)
+    };
+  }
+
+  function resetPages() {
+    currentPage.grid = 1;
+    currentPage.table = 1;
+  }
+
+  function updatePaginationControls(pagination) {
+    elements.paginationSizeSelect.value = String(pagination.size);
+    elements.paginationPrev.disabled = pagination.page <= 1;
+    elements.paginationNext.disabled = pagination.page >= pagination.totalPages;
+    elements.paginationInfo.textContent = t().paginationInfo(pagination.page, pagination.totalPages);
+
+    elements.paginationPageSelect.innerHTML = "";
+    for (let page = 1; page <= pagination.totalPages; page += 1) {
+      const option = document.createElement("option");
+      option.value = String(page);
+      option.textContent = String(page);
+      elements.paginationPageSelect.appendChild(option);
+    }
+    elements.paginationPageSelect.value = String(pagination.page);
   }
 
   function renderStats(collection) {
@@ -961,12 +1044,14 @@
 
   function render() {
     const filtered = filterGames();
+    const pagination = getPagination(filtered);
     renderStats(games);
-    renderCards(filtered);
-    renderTable(filtered);
+    renderCards(pagination.items);
+    renderTable(pagination.items);
 
     const totalValue = filtered.reduce((sum, game) => sum + Number(game.averagePriceBrl || 0), 0);
     elements.resultsCount.textContent = t().resultsCount(filtered.length, currency(totalValue));
+    updatePaginationControls(pagination);
     updateView();
     updateTableScrollSpacer();
   }
@@ -1109,6 +1194,7 @@
 
       games.unshift(...identifiedGames);
       await persistGames();
+      resetPages();
       refreshFilterOptions();
       clearForm();
       updateStaticTexts();
@@ -1191,6 +1277,7 @@
         games = games.map((game) => (game.id === existing.id ? payload : game));
       } else {
         games.unshift(payload);
+        resetPages();
       }
 
       await persistGames();
@@ -1230,6 +1317,7 @@
 
       games = normalizeCollection(imported);
       await persistGames();
+      resetPages();
       refreshFilterOptions();
       clearForm();
       updateStaticTexts();
@@ -1249,6 +1337,7 @@
     elements.yearMinFilter.value = "";
     elements.priceMaxFilter.value = "";
     elements.sortSelect.value = "title-asc";
+    resetPages();
     render();
   }
 
@@ -1390,6 +1479,7 @@
 
     games = games.filter((item) => item.id !== id);
     await persistGames();
+    resetPages();
     refreshFilterOptions();
     if (currentEditId === id) {
       clearForm();
@@ -1438,7 +1528,12 @@
       elements.yearMinFilter,
       elements.priceMaxFilter,
       elements.sortSelect
-    ].forEach((element) => element.addEventListener("input", render));
+    ].forEach((element) =>
+      element.addEventListener("input", () => {
+        resetPages();
+        render();
+      })
+    );
 
     elements.gameForm.addEventListener("submit", handleFormSubmit);
     elements.identifyByPhoto.addEventListener("click", () => {
@@ -1480,7 +1575,29 @@
         isBulkEditing = false;
         bulkImageFiles.clear();
       }
-      updateView();
+      render();
+    });
+    elements.paginationSizeSelect.addEventListener("change", () => {
+      const nextSize = Number(elements.paginationSizeSelect.value) || getActivePageSize();
+      pageSize[viewMode] = nextSize;
+      localStorage.setItem(viewMode === "table" ? TABLE_PAGE_SIZE_KEY : CARD_PAGE_SIZE_KEY, String(nextSize));
+      currentPage[viewMode] = 1;
+      render();
+    });
+    elements.paginationPageSelect.addEventListener("change", () => {
+      currentPage[viewMode] = Number(elements.paginationPageSelect.value) || 1;
+      render();
+      scrollCollectionToTop();
+    });
+    elements.paginationPrev.addEventListener("click", () => {
+      currentPage[viewMode] = Math.max(1, getActivePage() - 1);
+      render();
+      scrollCollectionToTop();
+    });
+    elements.paginationNext.addEventListener("click", () => {
+      currentPage[viewMode] = getActivePage() + 1;
+      render();
+      scrollCollectionToTop();
     });
     elements.bulkEditTable.addEventListener("click", startBulkEdit);
     elements.bulkSaveTable.addEventListener("click", saveBulkEdit);
