@@ -29,6 +29,8 @@ test("index.html contains the main interactive sections", () => {
     "pagination-prev",
     "pagination-next",
     "game-form",
+    "form-source-url-label",
+    "form-source-label-label",
     "menu-language-toggle",
     "nav-home-link",
     "nav-rare-link",

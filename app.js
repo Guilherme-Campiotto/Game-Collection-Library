@@ -83,6 +83,10 @@
       formGenrePlaceholder: "Ação, RPG, Corrida...",
       formYearLabel: "Ano de lançamento",
       formPriceLabel: "Preço médio (R$)",
+      formSourceUrlLabel: "Link da referência de preço",
+      formSourceUrlPlaceholder: "https://...",
+      formSourceLabelLabel: "Nome da fonte",
+      formSourceLabelPlaceholder: "Mercado Livre, PriceCharting...",
       formStatusLabel: "Status",
       formFormatLabel: "Mídia",
       formConditionLabel: "Condição",
@@ -220,6 +224,10 @@
       formGenrePlaceholder: "Action, RPG, Racing...",
       formYearLabel: "Release year",
       formPriceLabel: "Average price (R$)",
+      formSourceUrlLabel: "Price reference link",
+      formSourceUrlPlaceholder: "https://...",
+      formSourceLabelLabel: "Source name",
+      formSourceLabelPlaceholder: "Mercado Livre, PriceCharting...",
       formStatusLabel: "Status",
       formFormatLabel: "Format",
       formConditionLabel: "Condition",
@@ -372,6 +380,8 @@
     formGenreLabel: document.getElementById("form-genre-label"),
     formYearLabel: document.getElementById("form-year-label"),
     formPriceLabel: document.getElementById("form-price-label"),
+    formSourceUrlLabel: document.getElementById("form-source-url-label"),
+    formSourceLabelLabel: document.getElementById("form-source-label-label"),
     formStatusLabel: document.getElementById("form-status-label"),
     formFormatLabel: document.getElementById("form-format-label"),
     formConditionLabel: document.getElementById("form-condition-label"),
@@ -674,6 +684,10 @@
     elements.gameForm.elements.genre.placeholder = t().formGenrePlaceholder;
     elements.formYearLabel.textContent = t().formYearLabel;
     elements.formPriceLabel.textContent = t().formPriceLabel;
+    elements.formSourceUrlLabel.textContent = t().formSourceUrlLabel;
+    elements.gameForm.elements.sourceUrl.placeholder = t().formSourceUrlPlaceholder;
+    elements.formSourceLabelLabel.textContent = t().formSourceLabelLabel;
+    elements.gameForm.elements.sourceLabel.placeholder = t().formSourceLabelPlaceholder;
     elements.formStatusLabel.textContent = t().formStatusLabel;
     elements.formFormatLabel.textContent = t().formFormatLabel;
     elements.formConditionLabel.textContent = t().formConditionLabel;
@@ -735,7 +749,16 @@
     const { search, platform, genre, status, yearMin, priceMax, sort } = getFilterValues();
 
     const filtered = games.filter((game) => {
-      const haystack = [game.title, game.platform, game.genre, game.notes, game.condition, game.location]
+      const haystack = [
+        game.title,
+        game.platform,
+        game.genre,
+        game.notes,
+        game.condition,
+        game.location,
+        game.sourceLabel,
+        game.sourceUrl
+      ]
         .join(" ")
         .toLowerCase();
 
@@ -1220,6 +1243,8 @@
     elements.gameForm.elements.genre.value = game.genre;
     elements.gameForm.elements.releaseYear.value = game.releaseYear;
     elements.gameForm.elements.averagePriceBrl.value = game.averagePriceBrl;
+    elements.gameForm.elements.sourceUrl.value = game.sourceUrl || "";
+    elements.gameForm.elements.sourceLabel.value = game.sourceLabel || "";
     elements.gameForm.elements.status.value = game.status;
     elements.gameForm.elements.format.value = game.format;
     elements.gameForm.elements.condition.value = game.condition || "";
@@ -1248,6 +1273,8 @@
       const genre = formData.get("genre").trim();
       const releaseYear = Number(formData.get("releaseYear"));
       const averagePriceBrl = Number(formData.get("averagePriceBrl"));
+      const sourceUrl = formData.get("sourceUrl").trim();
+      const sourceLabel = formData.get("sourceLabel").trim();
       const photoFile = formData.get("photo");
       const existing = currentEditId ? findGame(currentEditId) : null;
 
@@ -1269,8 +1296,8 @@
         location: existing?.location || "Cadastro manual",
         image,
         notes: formData.get("notes").trim(),
-        sourceUrl: existing?.sourceUrl || "",
-        sourceLabel: existing?.sourceLabel || "Manual"
+        sourceUrl,
+        sourceLabel: sourceLabel || "Manual"
       };
 
       if (existing) {
